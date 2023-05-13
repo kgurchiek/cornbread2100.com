@@ -40,7 +40,7 @@ function changeFavicon(src) {
   if (commitIndex == null) {
     index = Math.floor(Math.random() * allCommits.length);
   } else {
-    index = parseInt(commitIndex) + 1;
+    index = parseInt(commitIndex);
     if (index >= allCommits.length) index = allCommits.length - 1;
   }
   const sha = allCommits[index].sha;
