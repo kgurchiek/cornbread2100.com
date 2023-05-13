@@ -46,7 +46,7 @@ function changeFavicon(src) {
   const sha = allCommits[index].sha;
   const treeSha = allCommits[index].commit.tree.sha;
   const date = new Date(allCommits[index].commit.author.date);
-  console.log(`Using commit ${index} from ${date.getMonth() + 1}/${date.getDate() + 1}/${date.getFullYear()} (DD/MM/YYYY)`)
+  console.log(`Using commit ${index + 1} from ${date.getMonth() + 1}/${date.getDate() + 1}/${date.getFullYear()} (DD/MM/YYYY)`)
   console.log(`https://github.com/landgreen/n-gon/tree/${sha}`)
   const files = (await (await fetch(`https://api.github.com/repos/landgreen/n-gon/git/trees/${sha}?recursive=true`, {
     headers: {
