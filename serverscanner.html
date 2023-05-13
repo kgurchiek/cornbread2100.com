@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Cornbread2100</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+  <div class="topbar">
+  </div>
+
+  <h1>Minecraft Server Scanner</h1>
+  <div style="text-align: center; color: #c8c8c8; font-family: 'Helvetica';">
+    <img src="https://raw.githubusercontent.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot/main/Icon.PNG"
+      alt="Minecraft Server Scanner Icon" width="100px" /><br>A discord bot that scans the entire internet for active
+    Minecraft servers<br><br>
+    <div class="icon-container">
+      <a href="https://github.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot"
+        style="text-decoration: none; color:white; font-family: 'Helvetica';">
+        <img src="icons/github.png" width="40px" title="Source Code" /><br>Source Code
+      </a>
+      <a href="https://discord.gg/TSWcF2m67m" style="text-decoration: none; color:white; font-family: 'Helvetica';">
+        <img src="icons/discord.png" width="40px" title="Official Discord Server" /><br>Official Discord
+      </a>
+    </div>
+
+    <iframe width="300" height="250"
+      src="https://charts.mongodb.com/charts-project-0-huhum/embed/charts?id=645294ab-2258-42b8-8107-94bbe0eb37cd&maxDataAge=3600&theme=dark&autoRefresh=true"></iframe>
+    <iframe width="300" height="250"
+      src="https://charts.mongodb.com/charts-project-0-huhum/embed/charts?id=645296fb-2258-4021-8ce1-94bbe0ed7df3&maxDataAge=3600&theme=dark&autoRefresh=true"></iframe>
+    <iframe width="300" height="250"
+      src="https://charts.mongodb.com/charts-project-0-huhum/embed/charts?id=6452923a-0495-42d4-83fd-5f65f360f8cd&maxDataAge=3600&theme=dark&autoRefresh=true"></iframe>
+    <iframe class="table" width="100%" height="750"
+      src="https://charts.mongodb.com/charts-project-0-huhum/embed/charts?id=6452aa0b-34c3-47ce-8e42-95065e252846&maxDataAge=3600&theme=dark&autoRefresh=true"></iframe>
+  </div>
+
+  <br><br>
+  <h1>How It Works</h1>
+  <div style="color: #c8c8c8; font-family: 'Helvetica';">
+    <p style="text-indent: 2em;">
+      When you go to the Minecraft multiplayer menu, you can see some basic info about a server before you join it, like the version, player count, etc. Your Minecraft client is getting this information by pinging the server, requesting it for its Minecraft info, and the server responds with a packet containing all that info. Note that there's no verification in that process that ensures you're actually using the Minecraft client, the server just responds to whatever requests it gets. That means that you're able to send your own request from any program, not just Minecraft, which is how I'm able to get the information from all the servers in my database.
+    </p>
+    <p style="text-indent: 2em;">
+        The next logical step would be creating the database in the first place. I can ping a server with the same method I mentioned before in order to check if it's actually hosting a Minecraft server, and simply repeat that process for every possible IP. Minecraft uses IPv4 addresses to host servers, which can range from <code>1.0.0.0</code> to <code>255.255.255.255</code>. That means there's <code>255 * 256^3</code>, or <code>4,278,190,080</code> possible Minecraft server IPs. That's obviously a lot of IPs to go through. When you ping a server, you'll need a certain threshold when you decide that a server has been inactive for too long and must not be a Minecraft server. Usually about 3 seconds works well, but that means to go through every IP it would take 407 years! Luckily, pinging every server individually isn't necessary, since there are tools like <a style='text-underline-position: under; color:#4786c4' href='https://github.com/robertdavidgraham/masscan'>Masscan</a> that can send thousands of pings at once to make the process much more efficient, allowing you to ping every IP in under a day. Minecraft Java's default port is <code>25565</code>, so I run a Masscan on all IPs on port <code>25565</code> to get a list of active IPs, and from there I can ping them as a Minecraft server to get a list of all the active Minecraft servers. My bot constantly goes back over that list to ping the servers and get updated information.
+    </p>
+  </div>
+
+  <div id="sidebar"></div>
+  <script src="sidebar.js"></script>
+</body>
+
+</html>
