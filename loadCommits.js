@@ -34,7 +34,7 @@ accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
     commitBox.appendChild(title);
     commitBox.appendChild(document.createElement('br'));
     const date = new Date(Date.parse(commit.commit.author.date));
-    commitBox.appendChild(document.createTextNode(`${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`))
+    commitBox.appendChild(document.createTextNode(`${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`))
     commitBox.appendChild(document.createElement('br'));
     commitBox.appendChild(document.createElement('br'));
     commitBox.appendChild(document.createTextNode(commit.commit.message));
