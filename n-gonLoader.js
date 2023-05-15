@@ -79,6 +79,7 @@ function changeFavicon(src) {
 
       changeFavicon(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/favicon.ico`)
       document.write(html)
+      document.body.style.display = 'none';
 
       var fullScript = '';
       for (const scriptName of scripts) {
@@ -87,7 +88,17 @@ function changeFavicon(src) {
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.textContent = scriptText;
-        document.head.appendChild(script);
+          document.head.appendChild(script);
+      }
+
+      document.body.style.display = '';
+      if (url.searchParams.get('mobile') == 'true') {
+        var r = new XMLHttpRequest();
+        r.open("GET", 'https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js', true);
+        r.onloadend = function (oEvent) {
+          new Function(r.responseText)();
+        }
+        r.send();
       }
     }
   }
