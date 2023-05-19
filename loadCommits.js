@@ -44,4 +44,14 @@ accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
     link.appendChild(commitBox);
     document.body.appendChild(link);
   }
+
+  const mobileCheckbox = document.getElementById('mobileCheckbox');
+
+  mobileCheckbox.addEventListener('change', (event) => {
+    if (event.target.checked) {
+      for (const button of document.body.children) if (button.children.length > 0 && button.children[0].className == 'box') button.href += '&mobile=true';
+    } else {
+      for (const button of document.body.children) if (button.children.length > 0 && button.children[0].className == 'box') button.href = button.href.replaceAll('&mobile=true', '');
+    }
+  });
 })();
