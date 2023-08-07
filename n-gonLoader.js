@@ -93,7 +93,7 @@ function changeFavicon(src) {
 
       document.body.style.display = '';
       if (url.searchParams.get('mobile') == 'true') {
-        alert(mobile)
+        alert('mobile')
         const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js')).text()
         
         var script = document.createElement('script');
