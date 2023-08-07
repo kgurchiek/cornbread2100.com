@@ -88,17 +88,18 @@ function changeFavicon(src) {
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.textContent = scriptText;
-          document.head.appendChild(script);
+        document.head.appendChild(script);
       }
 
       document.body.style.display = '';
       if (url.searchParams.get('mobile') == 'true') {
-        var r = new XMLHttpRequest();
-        r.open("GET", 'https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js', true);
-        r.onloadend = function (oEvent) {
-          new Function(r.responseText)();
-        }
-        r.send();
+        alert(mobile)
+        const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js')).text()
+        
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.textContent = scriptText;
+        document.head.appendChild(script);
       }
     }
   }
