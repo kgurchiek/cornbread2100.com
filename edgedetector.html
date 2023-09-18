@@ -53,6 +53,7 @@
             cursor: pointer;
         }
         .slider {
+            appearance: none;
             height: 5px;
             width: 50%;
             margin: 20px 0;
@@ -61,14 +62,17 @@
             border-style: solid;
             border-width: 1px;
             border-color: #3c3c3c;
+            cursor: ew-resize;
         }
 
         .slider::-webkit-slider-thumb {
-            transition: height 0.5s, width 0.5s, border-radius 0.5s;
+            width: 15px;
+            height: 15px;
+            appearance: none;
+            -webkit-transition: height 0.5s, width 0.5s, border-radius 0.5s;
             background-color: #dbbe00;
             border-radius: 10px;
             border: 2px solid #3c3c3c;
-            cursor: pointer;
         }
 
         .slider::-webkit-slider-thumb:hover {
@@ -86,11 +90,12 @@
         }
 
         .slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
             transition: height 0.5s, width 0.5s, border-radius 0.5s;
             background-color: #dbbe00;
             border-radius: 10px;
             border: 2px solid #3c3c3c;
-            cursor: pointer;
         }
 
         .slider::-moz-range-thumb:hover {
