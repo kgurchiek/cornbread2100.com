@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Display</title>
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        html {
+            height: 100%;
+            width: 100%;
+            background-color: #3c3c3c;
+            display: flex;
+            justify-content: center;
+            color: #c8c8c8;
+            font-family: 'Helvetica';
+        }
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            visibility: hidden;
+        }
+        #loading-spinner {
+            width: 68px;
+            height: 66px;
+            background-image: url('icons/load.png');
+            background-size: cover;
+            transform-origin: 28.5px 38px;
+            animation: spin 1s infinite linear;
+            visibility: visible;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .file-upload {
+            height: 40px;
+            width: 40px;
+            border-radius: 8px;
+            background-color: #dbbe00;
+            background-image: url('icons/upload.svg');
+            display: inline-block;
+            cursor: pointer;
+        }
+        .slider {
+            height: 5px;
+            width: 50%;
+            margin: 20px 0;
+            background-color: #4b4b4b;
+            border-radius: 5px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #3c3c3c;
+        }
+
+        .slider::-webkit-slider-thumb {
+            transition: height 0.5s, width 0.5s, border-radius 0.5s;
+            background-color: #dbbe00;
+            border-radius: 10px;
+            border: 2px solid #3c3c3c;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            height: 20px;
+            width: 20px;
+            border-radius: 20px;
+        }
+
+        .slider::-webkit-slider-thumb:active {
+            background-color: #3c3c3c;
+            border-color: #dbbe00;
+            height: 20px;
+            width: 20px;
+            border-radius: 20px;
+        }
+
+        .slider::-moz-range-thumb {
+            transition: height 0.5s, width 0.5s, border-radius 0.5s;
+            background-color: #dbbe00;
+            border-radius: 10px;
+            border: 2px solid #3c3c3c;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            height: 20px;
+            width: 20px;
+            border-radius: 20px;
+        }
+
+        .slider::-moz-range-thumb:active {
+            background-color: #3c3c3c;
+            border-color: #dbbe00;
+            height: 20px;
+            width: 20px;
+            border-radius: 20px;
+        }
+
+        .slider-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .slider-name {
+            padding-right: 0px;
+            width: 50%;
+        }
+
+        .slider-value {
+            padding-left: 10px;
+            width: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <label class="file-upload">
+        <input type="file" id="fileInput"/>
+    </label>
+    <br>
+    <canvas id="imageCanvas"></canvas>
+    <br>
+    <canvas id="imageCanvas2"></canvas>
+    <br>
+    <div class="slider-container">
+        <span class="slider-name">Check Width</span>
+        <input type="range" id="width-slider" class="slider" min="1" max="10" step="1" value="1">
+        <span id="width-slider-value" class="slider-value">1</span>
+    </div>
+    <div class="slider-container">
+        <span class="slider-name">Contrast Threshold</span>
+        <input type="range" id="threshold-slider" class="slider" min="0" max="255" step="1" value="20">
+        <span id="threshold-slider-value" class="slider-value">20</span>
+    </div>
+    <div id="loading-overlay">
+        <div id="loading-spinner"></div>
+    </div>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const canvas = document.getElementById('imageCanvas');
+        const context = canvas.getContext('2d');
+        const canvas2 = document.getElementById('imageCanvas2');
+        const context2 = canvas2.getContext('2d');
+        const widthSlider = document.getElementById('width-slider');
+        const widthValue = document.getElementById('width-slider-value');
+        const thresholdSlider = document.getElementById('threshold-slider');
+        const sliderValue = document.getElementById('threshold-slider-value');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        var image = new Image();
+        var width = 1;
+        var threshold = 20;
+        var rawValues = [];
+        var pixelData;
+
+        function updateImage() {
+            if (image.src == '') return;
+            requestAnimationFrame(() => {
+                loadingOverlay.style.visibility = 'visible';
+                loadingSpinner.style.width = '68px';
+                setTimeout(() => {
+                    rawValues = [];
+                    canvas2.width = image.width;
+                    canvas2.height = image.height;
+                    context2.drawImage(image, 0, 0);
+
+                    pixelData = context.getImageData(0, 0, image.width, image.height);
+                    const newPixelData = new ImageData(pixelData.width, pixelData.height);
+                    function getPos(i) {
+                        return { x: (i / 4) % image.width, y: Math.floor((i / 4) / image.width) };
+                    }
+                    for (var i = 0; i < pixelData.data.length; i += 4) {
+                        const pos = getPos(i);
+                        const newColor = {r: 0, g: 0, b: 0 };
+                        var count = 1;
+                        for (var j = -width; j <= width; j++) {
+                            for (var k = -width; k <= width; k++) {
+                                if (pos.x + j >= 0 && pos.x + j < image.width && pos.y + k >= 0 && pos.y + k < image.height) {
+                                    count++;
+                                    newColor.r += Math.abs(pixelData.data[i + (j + k * image.width) * 4] - pixelData.data[i]);
+                                    newColor.g += Math.abs(pixelData.data[i + (j + k * image.width) * 4 + 1] - pixelData.data[i + 1]);
+                                    newColor.b += Math.abs(pixelData.data[i + (j + k * image.width) * 4 + 2] - pixelData.data[i + 2]);
+                                }
+                            }
+                        }
+                        newColor.r /= count;
+                        newColor.g /= count;
+                        newColor.b /= count;
+
+                        if (newColor.r < 0) newColor.r = 0;
+                        if (newColor.g < 0) newColor.g = 0;
+                        if (newColor.b < 0) newColor.b = 0;
+
+                        rawValues.push(`${newColor.r},${newColor.g},${newColor.b}`);
+
+                        if (newColor.r >= threshold || newColor.g >= threshold || newColor.b >= threshold) {
+                            newPixelData.data[i] = pixelData.data[i];
+                            newPixelData.data[i + 1] = pixelData.data[i + 1];
+                            newPixelData.data[i + 2] = pixelData.data[i + 2];
+                        } else {
+                            newPixelData.data[i] = 0;
+                            newPixelData.data[i + 1] = 0;
+                            newPixelData.data[i + 2] = 0;
+                        }
+                        newPixelData.data[i + 3] = pixelData.data[i + 3];
+                    }
+                    canvas2.style.display = '';
+                    context2.putImageData(newPixelData, 0, 0);
+                    loadingOverlay.style.visibility = 'hidden';
+                    loadingSpinner.style.width = '0';
+                }, 0);
+            })
+        }
+        function thresholdUpdate() {
+            if (image.src == '') return;
+            requestAnimationFrame(() => {
+                loadingOverlay.style.visibility = 'visible';
+                loadingSpinner.style.width = '68px';
+                setTimeout(() => {
+                    canvas2.width = image.width;
+                    canvas2.height = image.height;
+                    context2.drawImage(image, 0, 0);
+                    const newPixelData = new ImageData(image.width, image.height);
+                    for (var i = 0; i < pixelData.data.length; i += 4) {
+                        const rgb = rawValues[i / 4].split(',');
+                        const newColor = {
+                            r: parseInt(rgb[0]),
+                            g: parseInt(rgb[1]),
+                            b: parseInt(rgb[2])
+                        }
+
+                        if (newColor.r >= threshold || newColor.g >= threshold || newColor.b >= threshold) {
+                            newPixelData.data[i] = pixelData.data[i];
+                            newPixelData.data[i + 1] = pixelData.data[i + 1];
+                            newPixelData.data[i + 2] = pixelData.data[i + 2];
+                        } else {
+                            newPixelData.data[i] = 0;
+                            newPixelData.data[i + 1] = 0;
+                            newPixelData.data[i + 2] = 0;
+                        }
+                        newPixelData.data[i + 3] = pixelData.data[i + 3];
+                    }
+                    context2.putImageData(newPixelData, 0, 0);
+                    loadingOverlay.style.visibility = 'hidden';
+                    loadingSpinner.style.width = '0';
+                }, 0)
+            })
+        }
+        window.addEventListener('DOMContentLoaded', function () {
+            widthSlider.value = width;
+            thresholdSlider.value = threshold;
+            canvas.style.display = 'none';
+            canvas2.style.display = 'none';
+            loadingSpinner.style.width = '0.1px'; // trick the image into loading
+        });
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    image.onload = () => {
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        requestAnimationFrame(() => {
+                            context.drawImage(image, 0, 0);
+                            canvas.style.display = '';
+                            setTimeout(updateImage, 0);
+                        })
+                    }
+                    image.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        widthSlider.addEventListener('input', function () {
+            width = parseInt(this.value, 10);
+            widthValue.textContent = width;
+        });
+        widthSlider.addEventListener('mouseup', function () {
+            updateImage();
+        });
+
+        thresholdSlider.addEventListener('input', function () {
+            threshold = parseInt(this.value, 10);
+            sliderValue.textContent = threshold;
+        });
+        thresholdSlider.addEventListener('mouseup', function () {
+            thresholdUpdate();
+        });
+    </script>
+</body>
+</html>
