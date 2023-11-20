@@ -39,7 +39,7 @@ accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
     commitBox.appendChild(document.createElement('br'));
     commitBox.appendChild(document.createTextNode(commit.commit.message));
     const link = document.createElement('a');
-    link.href = `n-gon?commitIndex=${commitCount - i - 1}`;
+    link.href = `n-gon?commit=${commitCount - i - 1}`;
     link.style = "text-decoration: none; color:white; font-family: 'Helvetica'";
     link.appendChild(commitBox);
     document.body.appendChild(link);

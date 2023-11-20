@@ -1,7 +1,7 @@
 var accessToken = 'ghp_nf8tOOjB8U692';
 accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
 const url = new URL(window.location.toLocaleString());
-const commitIndex = url.searchParams.get('commitIndex');
+const commitIndex = url.searchParams.get('commit');
 
 function changeFavicon(src) {
   var link = document.createElement('link');
@@ -46,7 +46,7 @@ function changeFavicon(src) {
   const sha = allCommits[index].sha;
   const treeSha = allCommits[index].commit.tree.sha;
   const date = new Date(allCommits[index].commit.author.date);
-  console.log(`Using commit ${index + 1} from ${date.getMonth() + 1}/${date.getDate() + 1}/${date.getFullYear()} (DD/MM/YYYY)`)
+  console.log(`Using commit ${index + 1} from ${date.getMonth() + 1}/${date.getDate() + 1}/${date.getFullYear()} (MM/DD/YYYY)`)
   console.log(`https://github.com/landgreen/n-gon/tree/${sha}`)
   const files = (await (await fetch(`https://api.github.com/repos/landgreen/n-gon/git/trees/${sha}?recursive=true`, {
     headers: {
