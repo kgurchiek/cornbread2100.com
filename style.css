@@ -6,7 +6,7 @@
 html {
   height: 100%;
   width: 100%;
-  background-color: #3c3c3c;
+  background-color: #000;
   display: flex;
   justify-content: center;
   color: #c8c8c8;
@@ -49,12 +49,12 @@ input[type="checkbox"] {
   border-left: 0px;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-  color: #3c3c3c;
+  color: #000;
   background-color: #dbbe00;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 25px;
+  font-size: 27px;
   cursor: pointer;
   aspect-ratio: 1;
 }
@@ -65,20 +65,28 @@ input[type="checkbox"] {
 }
 
 .box {
+  display: block;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
   padding: 10px;
   line-height: 150%;
-  width: 75%;
+  width: 75vw;
   height: auto;
   border: 2px solid #1e1e1e;
   border-radius: 1rem;
-  background-color: #2d2d2d;
+  background-color: #222;
   text-align: center;
   vertical-align: middle;
   color: #c8c8c8;
+  font-size: 18px;
   font-family: 'Helvetica';
+  transition: border-color 0.3s, width 0.3s, height 0.3s;
+}
+
+.box:hover {
+  border-color: #dbbe00;
+  width: 77vw;
 }
 
 .icon-container {
@@ -86,8 +94,9 @@ input[type="checkbox"] {
   margin-left: auto;
   margin-right: auto;
   width: 75%;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
+  gap: 50px
 }
 
 .overlay {
@@ -111,7 +120,7 @@ sidetoggle:hover + .outclick, .outclick:hover {
 }
 
 .topbar {
-  height: 42px;
+  height: 35px;
   background-color: #dbbe00;
   width: 100vw;
   margin: -10px;
@@ -123,8 +132,8 @@ sidetoggle:hover + .outclick, .outclick:hover {
   height: 0; 
   margin-left: 150px;
   margin-top: -10px;
-  border-bottom: 40px solid transparent; 
-  border-right: 150px solid #dbbe00; 
+  border-bottom: 40px solid transparent;
+  border-right: 150px solid #dbbe00;
 }
 
 .sidebar {
