@@ -45,13 +45,17 @@ accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
     document.body.appendChild(link);
   }
 
+  const controllerCheckbox = document.getElementById('controllerCheckbox');
   const mobileCheckbox = document.getElementById('mobileCheckbox');
 
   mobileCheckbox.addEventListener('change', (event) => {
-    if (event.target.checked) {
-      for (const button of document.body.children) if (button.children.length > 0 && button.children[0].className == 'box') button.href += '&mobile=true';
-    } else {
-      for (const button of document.body.children) if (button.children.length > 0 && button.children[0].className == 'box') button.href = button.href.replaceAll('&mobile=true', '');
-    }
+    if (button.children.length <= 0 || button.children[0].className != 'box') return;
+    if (event.target.checked) for (const button of document.body.children) button.href += '&mobile=true';
+    else for (const button of document.body.children) button.href = button.href.replaceAll('&mobile=true', '');
+  });
+  controllerCheckbox.addEventListener('change', (event) => {
+    if (button.children.length <= 0 || button.children[0].className != 'box') return
+    if (event.target.checked) for (const button of document.body.children) button.href += '&controller=true';
+    else for (const button of document.body.children) button.href = button.href.replaceAll('&controller=true', '');
   });
 })();

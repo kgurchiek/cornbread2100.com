@@ -92,9 +92,16 @@ function changeFavicon(src) {
       }
 
       document.body.style.display = '';
+
+      if (url.searchParams.get('controller') == 'true') {
+        const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-controller/main/main.js')).text();
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.textContent = scriptText;
+        document.head.appendChild(script);
+      }
       if (url.searchParams.get('mobile') == 'true') {
         const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js')).text();
-        
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.textContent = scriptText;
