@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'mojangles';
+  src: url('mojangles.woff2') format('woff2'),
+  url('mojangles.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -71,9 +79,9 @@ input[type="checkbox"] {
   margin-bottom: 20px;
   padding: 10px;
   line-height: 150%;
-  width: 75vw;
+  width: 73vw;
   height: auto;
-  border: 2px solid #1e1e1e;
+  border: 2px solid #222;
   border-radius: 1rem;
   background-color: #222;
   text-align: center;
@@ -81,12 +89,13 @@ input[type="checkbox"] {
   color: #c8c8c8;
   font-size: 18px;
   font-family: 'Helvetica';
-  transition: border-color 0.3s, width 0.3s, height 0.3s;
+  text-decoration: none;
+  transition: border-color 0.3s, width 0.3s;
 }
 
 .box:hover {
   border-color: #dbbe00;
-  width: 77vw;
+  width: 75vw;
 }
 
 .icon-container {
@@ -96,15 +105,24 @@ input[type="checkbox"] {
   width: 75%;
   justify-content: center;
   align-items: center;
-  gap: 50px
+  gap: 50px;
+}
+
+.icon-container img {
+  width: 40px;
+  transition: width 0.3s, height 0.3s;
+}
+
+.icon-container img:hover {
+  width: 50px;
 }
 
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 0%;
-  height: 0%;
+  width: 0;
+  height: 0;
   transition: background-color 0.3s ease-out, width 0s 0.3s, height 0s 0.3s;
 }
 
@@ -206,7 +224,7 @@ iframe {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #303030;
+  background: #222;
   border-radius: 8px;
 }
 
@@ -359,4 +377,58 @@ input[type="file"] {
   padding-left: 10px;
   width: 20px;
   text-align: right;
+}
+
+.serverlist {
+  width: 90%;
+  height: 95%;
+  margin: 0 auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #222;
+  border-radius: 1rem;
+  overflow: auto;
+}
+
+div.serverlist::-webkit-scrollbar {
+  display: none
+}
+
+div.serverlist::-webkit-scrollbar-thumb {
+  display: none
+}
+
+.server {
+  width: 95%;
+  min-height: 250px;
+  margin: 10px auto;
+  background-color: #333;
+  border-radius: 1rem;
+  text-align: center;
+  font-family: mojangles;
+}
+
+.server img {
+  padding-left: 20px;
+  padding-right: 40px;
+  height:150px;
+}
+
+.playerlist {
+  width: 250%;
+  grid-column: 4 / 5;
+  grid-row: 2 / 6;
+  background-color: #000;
+  border-radius: 1rem;
+  text-align: left;
+  font-family: mojangles;
+  overflow: auto;
+}
+
+div.playerlist::-webkit-scrollbar {
+  display: none
+}
+
+div.playerlist::-webkit-scrollbar-thumb {
+  display: none
 }

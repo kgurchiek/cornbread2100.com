@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>Cornbread2100</title>
+  <title>MC Server Scanner</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 
@@ -15,20 +15,72 @@
       alt="Minecraft Server Scanner Icon" width="100px" /><br>A discord bot that scans the entire internet for active
     Minecraft servers<br><br>
     <div class="icon-container">
-      <a href="https://github.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot"
-        style="text-decoration: none; color:white; font-family: 'Helvetica';">
-        <img src="icons/github.png" width="40px" title="Source Code" /><br>Source Code
+      <a href="https://github.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot" style="text-decoration: none; color:white; font-family: 'Helvetica';">
+        <img src="icons/github.png" width="40px" alt="Source Code" title="Source Code" /><br>Source Code
       </a>
       <a href="https://discord.gg/TSWcF2m67m" style="text-decoration: none; color:white; font-family: 'Helvetica';">
-        <img src="icons/discord.png" width="40px" title="Official Discord Server" /><br>Official Discord
+        <img src="icons/discord.png" width="40px" alt="Official Discord Server" title="Official Discord Server" /><br>Official Discord
       </a>
     </div>
+  </div>
 
-    <br><br>
-    stats and search coming soon
+  <br>
+
+  <div class="serverlist">
+    <div class="server">
+      <h3 style="padding-top: 20px">1.2.3.4:25565</h3>
+      <div style="display: flex; overflow-wrap: break-word">
+        <img src="https://ping.cornbread2100.com/favicon/?ip=play.cubecraft.net&port=25565" alt="Favicon" />
+        <div style="width:100%; display: grid; grid-template-columns: repeat(6, 15%); gap: 5%; grid-template-rows: repeat(6, 15%);">
+          <div style="grid-column: 1; text-align: left;">
+            MOTD
+          </div>
+          <div style="grid-column: 3; text-align: left">
+            Version
+          </div>
+          <div style="grid-column: 3; grid-row: 2; text-align: left">
+            Premium
+          </div>
+          <div style="grid-column: 3; grid-row: 3; text-align: left">
+            LastSeen
+          </div>
+          <div style="grid-column: 4; text-align: left">
+            0 / 2
+          </div>
+          <div class="playerlist">
+            <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 10px; margin-right: 10px">
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+              player<br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="server">
+    </div>
+    <div class="server">
+    </div>
+    <div class="server">
+    </div>
+    <div class="server">
+    </div>
+    <div class="server">
+    </div>
   </div>
 
   <br><br>
+
   <h1>How It Works</h1>
   <div style="color: #c8c8c8; font-family: 'Helvetica';">
     <p style="text-indent: 2em;">
@@ -41,6 +93,8 @@
 
   <div id="sidebar"></div>
   <script src="sidebar.js"></script>
+
+  <script src="server-scanner.js"></script>
 </body>
 
 </html>
