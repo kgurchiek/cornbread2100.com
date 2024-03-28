@@ -52,7 +52,7 @@ function updateFilter() {
     if (onlinePlayerEnabled) mongoFilter['players.sample.name'] = onlinePlayer.value;
     if (pastPlayerEnabled) mongoFilter['players.sample.name'] = pastPlayer.value;
     if (versionEnabled) mongoFilter['version.name'] = { '$regex': version.value, '$options': 'i' };
-    if (protocolEnabled) mongoFilter['version.protocol'] = protocol.value;
+    if (protocolEnabled && !isNaN(parseInt(protocol.value))) mongoFilter['version.protocol'] = parseInt(protocol.value);
     if (descriptionEnabled) mongoFilter['$or'] = [ {'description': {'$regex': description.value, '$options': 'i'}}, {'description.text': {'$regex': description.value, '$options': 'i'}}, { 'description.extra.text': { '$regex': description.value, '$options': 'i', } }, ];
     if (hasPlayerSampleEnabled) {
         if (mongoFilter['players.sample'] == null) mongoFilter['players.sample'] = {};
