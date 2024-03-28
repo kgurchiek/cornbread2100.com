@@ -26,58 +26,77 @@
 
   <br>
 
-  <div class="serverlist">
-    <div class="server">
-      <h3 style="padding-top: 20px">1.2.3.4:25565</h3>
-      <div style="display: flex; overflow-wrap: break-word">
-        <img src="https://ping.cornbread2100.com/favicon/?ip=play.cubecraft.net&port=25565" alt="Favicon" />
-        <div style="width:100%; display: grid; grid-template-columns: repeat(6, 15%); gap: 5%; grid-template-rows: repeat(6, 15%);">
-          <div style="grid-column: 1; text-align: left;">
-            MOTD
-          </div>
-          <div style="grid-column: 3; text-align: left">
-            Version
-          </div>
-          <div style="grid-column: 3; grid-row: 2; text-align: left">
-            Premium
-          </div>
-          <div style="grid-column: 3; grid-row: 3; text-align: left">
-            LastSeen
-          </div>
-          <div style="grid-column: 4; text-align: left">
-            0 / 2
-          </div>
-          <div class="playerlist">
-            <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 10px; margin-right: 10px">
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-              player<br>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="filters">
+    <div style="grid-column: 1; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="playerCountEnabled" type="checkbox"></label> Player Count</h4>
+      <label><input id="minOnline" type="number" style="width: 30%"></label> - <label><input id="maxOnline" type="number" style="width: 30%"></label>
     </div>
-    <div class="server">
+    <div style="grid-column: 2; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="playerCapEnabled" type="checkbox"></label> Player Cap</h4>
+      <label><input id="playerCap" type="number" style="width: 30%"></label>
     </div>
-    <div class="server">
+    <div style="grid-column: 3; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="isFullEnabled" type="checkbox"></label> Is Full</h4>
+      <label class="switch">
+        <input id="isFull" type="checkbox">
+        <span class="switch-slider"></span>
+      </label>
     </div>
-    <div class="server">
+    <div style="grid-column: 4; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="onlinePlayerEnabled" type="checkbox"></label> Online Player</h4>
+      <label><input id="onlinePlayer" style="width: 30%"></label>
     </div>
-    <div class="server">
+    <div style="grid-column: 1; grid-row: 2; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="versionEnabled" type="checkbox"></label> Version</h4>
+      <label><input id="version" style="width: 30%"></label>
     </div>
-    <div class="server">
+    <div style="grid-column: 2; grid-row: 2; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="protocolEnabled" type="checkbox"></label> Protocol</h4>
+      <label><input id="protocol" type="number" style="width: 30%"></label>
+    </div>
+    <div style="grid-column: 3; grid-row: 2; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="hasPlayerSampleEnabled" type="checkbox"></label> Has Player Sample</h4>
+      <label class="switch">
+        <input id="hasPlayerSample" type="checkbox">
+        <span class="switch-slider"></span>
+      </label>
+    </div>
+    <div style="grid-column: 4; grid-row: 2; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="pastPlayerEnabled" type="checkbox"></label> Past Player</h4>
+      <label><input id="pastPlayer" style="width: 30%"></label>
+    </div>
+    <div style="grid-column: 1; grid-row: 3; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="descriptionEnabled" type="checkbox"></label> Description</h4>
+      <label><textarea id="description" style="width: 100%; resize: none;"></textarea></label>
+    </div>
+    <div style="grid-column: 2; grid-row: 3; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="seenAfterEnabled" type="checkbox"></label> Last Seen</h4>
+      <label><input id="seenAfter" type="datetime-local"></label>
+    </div>
+    <div style="grid-column: 3; grid-row: 3; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="ipSubnetEnabled" type="checkbox"></label> IP Subnet</h4>
+      <label><input id="ipSubnet" style="width: 45%"></label>
+    </div>
+    <div style="grid-column: 4; grid-row: 3; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="portEnabled" type="checkbox"></label> Port</h4>
+      <label><input id="port" type="number" style="width: 30%" value="25565"></label>
+    </div>
+    <div style="grid-column: 1; grid-row: 4; text-align: center">
+      <h4 style="margin: 5px auto"><label><input id="crackedEnabled" type="checkbox"></label> Cracked</h4>
+      <label class="switch">
+        <input id="cracked" type="checkbox">
+        <span class="switch-slider"></span>
+      </label>
     </div>
   </div>
+
+  <br>
+
+  <div onclick="updateFilter()" style="width: 100px; height: 30px; display: flex; align-items: center; background-color: #dbbe00; color: #000; border-radius: 3px; margin: 0 auto;"><p style="margin: 0 auto">Search</p></div>
+
+  <br>
+
+  <div class="serverlist"></div>
 
   <br><br>
 

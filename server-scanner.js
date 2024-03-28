@@ -1,5 +1,93 @@
-(async () => {
-    const data = await (await fetch(`https://api.cornbread2100.com/servers?query={"lastSeen":{"$gte":${Math.floor(new Date().getTime() / 1000) - 3600}}}`)).json();
+function updateFilter() {
+    mongoFilter = {};
+
+    const playerCountEnabled = document.getElementById('playerCountEnabled').checked;
+    const playerCapEnabled = document.getElementById('playerCapEnabled').checked;
+    const isFullEnabled = document.getElementById('isFullEnabled').checked;
+    const onlinePlayerEnabled = document.getElementById('onlinePlayerEnabled').checked;
+    const versionEnabled = document.getElementById('versionEnabled').checked;
+    const protocolEnabled = document.getElementById('protocolEnabled').checked;
+    const hasPlayerSampleEnabled = document.getElementById('hasPlayerSampleEnabled').checked;
+    const pastPlayerEnabled = document.getElementById('pastPlayerEnabled').checked;
+    const descriptionEnabled = document.getElementById('descriptionEnabled').checked;
+    const seenAfterEnabled = document.getElementById('seenAfterEnabled').checked;
+    const ipSubnetEnabled = document.getElementById('ipSubnetEnabled').checked;
+    const portEnabled = document.getElementById('portEnabled').checked;
+    const crackedEnabled = document.getElementById('crackedEnabled').checked;
+
+    const minOnline = document.getElementById('minOnline');
+    const maxOnline = document.getElementById('maxOnline');
+    const playerCap = document.getElementById('playerCap');
+    const isFull = document.getElementById('isFull');
+    const onlinePlayer = document.getElementById('onlinePlayer');
+    const version = document.getElementById('version');
+    const protocol = document.getElementById('protocol');
+    const hasPlayerSample = document.getElementById('hasPlayerSample');
+    const pastPlayer = document.getElementById('pastPlayer');
+    const description = document.getElementById('description');
+    const seenAfter = document.getElementById('seenAfter');
+    const ipSubnet = document.getElementById('ipSubnet');
+    const port = document.getElementById('port');
+    const cracked = document.getElementById('cracked');
+
+    if (playerCountEnabled) {
+        if (minOnline.value == maxOnline.value) {
+            if (!isNaN(parseInt(minOnline.value))) mongoFilter['players.online'] = parseInt(minOnline.value);
+        } else {
+            if (!isNaN(parseInt(minOnline.value))) {
+                if (mongoFilter['players.online'] == null) mongoFilter['players.online'] = {};
+                mongoFilter['players.online'].$gte = parseInt(minOnline.value);
+            }
+            if (!isNaN(parseInt(maxOnline.value))) {
+                if (mongoFilter['players.online'] == null) mongoFilter['players.online'] = {};
+                mongoFilter['players.online'].$lte = parseInt(maxOnline.value);
+            }
+        }
+    }
+    if (playerCapEnabled && !isNaN(parseInt(playerCap.value))) mongoFilter['players.max'] = parseInt(playerCap.value);
+    if (isFullEnabled) {
+        if (isFull.checked) mongoFilter['$expr'] = { '$eq': ['$players.online', '$players.max'] };
+        else mongoFilter['$expr'] = { '$ne': ['$players.online', '$players.max'] };
+    }
+    if (onlinePlayerEnabled) mongoFilter['players.sample.name'] = onlinePlayer.value;
+    if (pastPlayerEnabled) mongoFilter['players.sample.name'] = pastPlayer.value;
+    if (versionEnabled) mongoFilter['version.name'] = { '$regex': version.value, '$options': 'i' };
+    if (protocolEnabled) mongoFilter['version.protocol'] = protocol.value;
+    if (descriptionEnabled) mongoFilter['$or'] = [ {'description': {'$regex': description.value, '$options': 'i'}}, {'description.text': {'$regex': description.value, '$options': 'i'}}, { 'description.extra.text': { '$regex': description.value, '$options': 'i', } }, ];
+    if (hasPlayerSampleEnabled) {
+        if (mongoFilter['players.sample'] == null) mongoFilter['players.sample'] = {};
+        mongoFilter['players.sample']['$exists'] = hasPlayerSample.checked;
+        if (hasPlayerSample.checked) mongoFilter['players.sample']['$not'] = { '$size': 0 };
+    }
+    if (seenAfterEnabled) mongoFilter['lastSeen'] = { '$gte': Math.floor(new Date(seenAfter.value).getTime() / 1000) };
+    if (ipSubnetEnabled) {
+        const [ip, range] = ipSubnet.value.split('/');
+        const ipCount = 2**(32 - range)
+        const octets = ip.split('.');
+        for (var i = 0; i < octets.length; i++) {
+            if (256**i < ipCount) {
+                var min = octets[octets.length - i - 1];
+                var max = 255;
+                if (256**(i + 1) < ipCount) {
+                    min = 0;
+                } else {
+                    max = ipCount / 256;
+                }
+                octets[octets.length - i - 1] = `(${min}|[1-9]\\d{0,2}|[1-9]\\d{0,1}\\d|${max})`;
+            }
+        }
+
+        mongoFilter['ip'] = { '$regex': `^${octets[0]}\.${octets[1]}\.${octets[2]}\.${octets[3]}\$`, '$options': 'i' }
+    }
+    if (portEnabled) mongoFilter['port'] = port.value;
+    if (crackedEnabled) mongoFilter['cracked'] = cracked.value;
+
+    console.log(mongoFilter)
+    updateServers();
+}
+
+async function updateServers() {
+    const data = await (await fetch(`https://api.cornbread2100.com/servers?query=${JSON.stringify(mongoFilter)}`)).json();
     // const data = [{ ip: '1.2.3.4', port: 25565, description: 'A Minecraft Server', version: { name: '1.20.4', protocol: 765 }, cracked: false, lastSeen: Math.floor(new Date().getTime() / 1000) - 1800, players: { online: 1, max: 20, sample: [{ id:'e6135a83-d680-39d6-b4be-65a3d8bb97ad', name: 'Dream',lastSeen: Math.floor(new Date().getTime() / 1000) - 1800 }]} }];
     console.log(data);
     const serverList = document.getElementsByClassName('serverlist')[0];
@@ -24,7 +112,7 @@
         content.appendChild(favicon);
 
         const info = document.createElement('div');
-        info.style = 'width:100%; display: grid; grid-template-columns: repeat(6, 15%); gap: 5%; grid-template-rows: repeat(6, 15%);';
+        info.style = 'width:100%; display: grid; grid-template-columns: repeat(6, 15%); gap: 5%; grid-template-rows: repeat(6, 37px);';
         content.appendChild(info);
 
         const motd = document.createElement('div');
@@ -52,17 +140,17 @@
         info.appendChild(motd);
 
         const version = document.createElement('div');
-        version.style = 'grid-column: 3; text-align: left;';
+        version.style = 'grid-column: 3/4; grid-row: 1/3; text-align: left; overflow: auto';
         version.innerText = server.version.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         info.appendChild(version);
 
         const cracked = document.createElement('div');
-        cracked.style = 'grid-column: 3; grid-row: 2; text-align: left;';
+        cracked.style = 'grid-column: 3; grid-row: 3; text-align: left;';
         cracked.innerText = server.cracked == null ? 'Unknown' : server.cracked ? 'Cracked' : 'Premium';
         info.appendChild(cracked);
 
         const lastSeen = document.createElement('div');
-        lastSeen.style = 'grid-column: 3; grid-row: 3; text-align: left;';
+        lastSeen.style = 'grid-column: 3; grid-row: 4; text-align: left;';
         lastSeen.innerText = Math.floor(new Date().getTime() / 1000) - server.lastSeen < 86400 ? new Date(server.lastSeen * 1000).toLocaleTimeString() : new Date(server.lastSeen * 1000).toLocaleDateString();
         info.appendChild(lastSeen);
 
@@ -81,4 +169,7 @@
         playerListText.innerText = playerListText.innerText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
         playerList.appendChild(playerListText);
     }
-})();
+}
+
+let mongoFilter = { lastSeen: { $gte: Math.floor(new Date().getTime() / 1000) - 3600 }}
+updateServers();
