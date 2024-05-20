@@ -26,7 +26,7 @@ function changeFavicon(src) {
         'Authorization': `Bearer ${accessToken}`
       }
     })).json();
-    allCommits = allCommits.concat(commits)
+    allCommits = allCommits.concat(commits);
   }
   const commits = await (await fetch(`https://api.github.com/repos/landgreen/n-gon/commits?per_page=${commitCount % 100}&page=${Math.floor(commitCount / 100)}`, {
     headers: {
@@ -46,8 +46,8 @@ function changeFavicon(src) {
   const sha = allCommits[index].sha;
   const treeSha = allCommits[index].commit.tree.sha;
   const date = new Date(allCommits[index].commit.author.date);
-  console.log(`Using commit ${index + 1} from ${date.getMonth() + 1}/${date.getDate() + 1}/${date.getFullYear()} (MM/DD/YYYY)`)
-  console.log(`https://github.com/landgreen/n-gon/tree/${sha}`)
+  console.log(`Using commit ${index + 1} from ${date.getMonth() + 1}/${date.getDate() + 1}/${date.getFullYear()} (MM/DD/YYYY)`);
+  console.log(`https://github.com/landgreen/n-gon/tree/${sha}`);
   const files = (await (await fetch(`https://api.github.com/repos/landgreen/n-gon/git/trees/${sha}?recursive=true`, {
     headers: {
       'Authorization': `Bearer ${accessToken}`
@@ -58,8 +58,8 @@ function changeFavicon(src) {
     if (file.path == 'index.html') {
       var html = await (await fetch(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/index.html`)).text()
       const cssText = await (await fetch(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/style.css`)).text();
-      html = html.replace('<link rel="stylesheet" href="style.css">', `<style>\n${cssText}\n</style>`)
-      html = html.replace('favicon.ico', `https://raw.githubusercontent.com/landgreen/n-gon/${sha}/favicon.ico`)
+      html = html.replace('<link rel="stylesheet" href="style.css">', `<style>\n${cssText}\n</style>`);
+      html = html.replace('favicon.ico', `https://raw.githubusercontent.com/landgreen/n-gon/${sha}/favicon.ico`);
       var scripts = [];
       var rawScripts = html.split("<script src='");
       for (var i = 1; i < rawScripts.length; i++) {
@@ -73,18 +73,18 @@ function changeFavicon(src) {
       }
       
       for (const scriptName of scripts) {
-        html = html.replace(`<script src="${scriptName}"></script>`, '')
-        html = html.replace(`<script src='${scriptName}'></script>`, '')
+        html = html.replace(`<script src="${scriptName}"></script>`, '');
+        html = html.replace(`<script src='${scriptName}'></script>`, '');
       }
 
-      changeFavicon(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/favicon.ico`)
-      document.write(html)
+      changeFavicon(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/favicon.ico`);
+      document.write(html);
       document.body.style.display = 'none';
 
       var fullScript = '';
       for (const scriptName of scripts) {
-        const scriptText = await (await fetch(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/${scriptName}`)).text()
-        
+        const scriptText = (await (await fetch(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/${scriptName}`)).text()).replaceAll('https://landgreen.github.io/sidescroller/index.html?', `${location.href}${location.href.includes('?') ? '' : '?'}`).replaceAll('https://landgreen.github.io/n-gon/index.html?', `${location.href}${location.href.includes('?') ? '' : '?'}`);
+        if (scriptText.startsWith('404')) continue;
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.textContent = scriptText;
@@ -92,16 +92,26 @@ function changeFavicon(src) {
       }
 
       document.body.style.display = '';
-
-      if (url.searchParams.get('controller') == 'true') {
-        const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-controller/main/main.js')).text();
+      oldGetUrlVars = getUrlVars;
+      getUrlVars = () => {
+        const result = oldGetUrlVars();
+        delete result.commit;
+        delete result.mobile;
+        delete result.controller;
+        return result;
+      }
+      window.dispatchEvent(new Event('load'));
+      if (url.searchParams.get('mobile') == 'true') {
+        const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js')).text();
+        
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.textContent = scriptText;
         document.head.appendChild(script);
       }
-      if (url.searchParams.get('mobile') == 'true') {
-        const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js')).text();
+      if (url.searchParams.get('controller') == 'true') {
+        const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-controller/main/main.js')).text();
+        
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.textContent = scriptText;
