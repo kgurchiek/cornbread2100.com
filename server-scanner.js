@@ -80,7 +80,7 @@ function updateFilter() {
         mongoFilter['ip'] = { '$regex': `^${octets[0]}\.${octets[1]}\.${octets[2]}\.${octets[3]}\$`, '$options': 'i' }
     }
     if (portEnabled) mongoFilter['port'] = port.value;
-    if (crackedEnabled) mongoFilter['cracked'] = cracked.value;
+    if (crackedEnabled) mongoFilter['cracked'] = cracked.checked;
 
     console.log(mongoFilter)
     updateServers();
