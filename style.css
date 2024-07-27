@@ -167,7 +167,7 @@ sidetoggle:hover + .outclick, .outclick:hover {
 
 .sidebar-content {
   padding-top: 10px;
-  background-color: #3c3c3c;
+  background-color: #222;
   width: 300px;
   display: inline-block;
   font-family: "Helvetica";
