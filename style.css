@@ -95,7 +95,7 @@ input[type="checkbox"] {
 
 .box:hover {
   border-color: #dbbe00;
-  width: 75vw;
+  transform: scale(1.1);
 }
 
 .icon-container {
