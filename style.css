@@ -90,7 +90,7 @@ input[type="checkbox"] {
   font-size: 18px;
   font-family: 'Helvetica';
   text-decoration: none;
-  transition: border-color 0.3s, width 0.3s;
+  transition: border-color 0.3s, transform 0.3s;
 }
 
 .box:hover {
