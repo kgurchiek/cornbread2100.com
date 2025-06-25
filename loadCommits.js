@@ -29,6 +29,7 @@ accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
     const commit = allCommits[i];
     const commitBox = document.createElement('div');
     commitBox.className = 'box';
+    commitBox.style.whiteSpace = 'pre-wrap';
     const title = document.createElement('strong');
     title.appendChild(document.createTextNode(`${commitCount - i}: ${commit.commit.message.split('\n')[0]}`))
     commitBox.appendChild(title);

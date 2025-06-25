@@ -2,118 +2,84 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>MC Server Scanner</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>MC Server Scanner</title>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-  <h1>Minecraft Server Scanner</h1>
-  <div style="text-align: center; color: #c8c8c8; font-family: 'Helvetica';">
-    <img src="https://raw.githubusercontent.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot/main/Icon.PNG"
-      alt="Minecraft Server Scanner Icon" width="100px" /><br>A discord bot that scans the entire internet for active
-    Minecraft servers<br><br>
-    <div class="icon-container">
-      <a href="https://github.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot" style="text-decoration: none; color:white; font-family: 'Helvetica';">
-        <img src="icons/github.png" width="40px" alt="Source Code" title="Source Code" /><br>Source Code
-      </a>
-      <a href="https://discord.gg/TSWcF2m67m" style="text-decoration: none; color:white; font-family: 'Helvetica';">
-        <img src="icons/discord.png" width="40px" alt="Official Discord Server" title="Official Discord Server" /><br>Official Discord
-      </a>
-    </div>
-  </div>
+    <svg style="display: none;">
+        <symbol id="icon-x" viewBox="5 5 14 14">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z" />
+        </symbol>
+    </svg>
 
-  <br>
+    <h1>Minecraft Server Scanner</h1>
+    <div style="text-align: center; color: #c8c8c8; font-family: 'Helvetica';">
+        <img src="https://raw.githubusercontent.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot/main/Icon.PNG"
+            alt="Minecraft Server Scanner Icon" width="100px" /><br>Scans the entire internet for active
+        Minecraft servers<br><br>
+        <div class="icon-container">
+            <a href="https://github.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot" style="text-decoration: none; color:white; font-family: 'Helvetica';">
+                <img src="icons/github.png" width="40px" alt="Source Code" title="Source Code" /><br>Source Code
+            </a>
+            <a href="https://discord.gg/TSWcF2m67m" style="text-decoration: none; color:white; font-family: 'Helvetica';">
+                <img src="icons/discord.png" width="40px" alt="Official Discord Server" title="Official Discord Server" /><br>Official Discord Server
+            </a>
+        </div>
+    </div>
 
-  <div class="filters">
-    <div style="grid-column: 1; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="playerCountEnabled" type="checkbox"></label> Player Count</h4>
-      <label><input id="minOnline" type="number" style="width: 30%"></label> - <label><input id="maxOnline" type="number" style="width: 30%"></label>
-    </div>
-    <div style="grid-column: 2; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="playerCapEnabled" type="checkbox"></label> Player Cap</h4>
-      <label><input id="playerCap" type="number" style="width: 30%"></label>
-    </div>
-    <div style="grid-column: 3; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="isFullEnabled" type="checkbox"></label> Is Full</h4>
-      <label class="switch">
-        <input id="isFull" type="checkbox">
-        <span class="switch-slider"></span>
-      </label>
-    </div>
-    <div style="grid-column: 4; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="onlinePlayerEnabled" type="checkbox"></label> Online Player</h4>
-      <label><input id="onlinePlayer" style="width: 30%"></label>
-    </div>
-    <div style="grid-column: 1; grid-row: 2; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="versionEnabled" type="checkbox"></label> Version</h4>
-      <label><input id="version" style="width: 30%"></label>
-    </div>
-    <div style="grid-column: 2; grid-row: 2; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="protocolEnabled" type="checkbox"></label> Protocol</h4>
-      <label><input id="protocol" type="number" style="width: 30%"></label>
-    </div>
-    <div style="grid-column: 3; grid-row: 2; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="hasPlayerSampleEnabled" type="checkbox"></label> Has Player Sample</h4>
-      <label class="switch">
-        <input id="hasPlayerSample" type="checkbox">
-        <span class="switch-slider"></span>
-      </label>
-    </div>
-    <div style="grid-column: 4; grid-row: 2; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="pastPlayerEnabled" type="checkbox"></label> Past Player</h4>
-      <label><input id="pastPlayer" style="width: 30%"></label>
-    </div>
-    <div style="grid-column: 1; grid-row: 3; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="descriptionEnabled" type="checkbox"></label> Description</h4>
-      <label><textarea id="description" style="width: 100%; resize: none;"></textarea></label>
-    </div>
-    <div style="grid-column: 2; grid-row: 3; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="seenAfterEnabled" type="checkbox"></label> Last Seen</h4>
-      <label><input id="seenAfter" type="datetime-local"></label>
-    </div>
-    <div style="grid-column: 3; grid-row: 3; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="ipSubnetEnabled" type="checkbox"></label> IP Subnet</h4>
-      <label><input id="ipSubnet" style="width: 45%"></label>
-    </div>
-    <div style="grid-column: 4; grid-row: 3; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="portEnabled" type="checkbox"></label> Port</h4>
-      <label><input id="port" type="number" style="width: 30%" value="25565"></label>
-    </div>
-    <div style="grid-column: 1; grid-row: 4; text-align: center">
-      <h4 style="margin: 5px auto"><label><input id="crackedEnabled" type="checkbox"></label> Cracked</h4>
-      <label class="switch">
-        <input id="cracked" type="checkbox">
-        <span class="switch-slider"></span>
-      </label>
-    </div>
-  </div>
+    <br>
 
-  <br>
+    <div id="filters">
+        <div id="add-filter" class="disable-select">
+            <div id="dropdown-button" onclick="toggleDropdown()">+</div>
+            <div id="filter-dropdown" class="dropdown-content fade-bottom">
+                <a onclick="addFilter('Player Count')">Player Count</a>
+                <a onclick="addFilter('Player Cap')">Player Cap</a>
+                <a onclick="addFilter('Full')">Full</a>
+                <a onclick="addFilter('Version')">Version</a>
+                <a onclick="addFilter('Protocol')">Protocol</a>
+                <a onclick="addFilter('Has Player Sample')">Has Player Sample</a>
+                <a onclick="addFilter('Online Player')">Online Player</a>
+                <a onclick="addFilter('Past Player')">Past Player</a>
+                <a onclick="addFilter('Has Favicon')">Has Favicon</a>
+                <a onclick="addFilter('Description')">Description</a>
+                <a onclick="addFilter('Seen After')">Seen After</a>
+                <a onclick="addFilter('IP Subnet')">IP Subnet</a>
+                <a onclick="addFilter('Port')">Port</a>
+                <a onclick="addFilter('Cracked')">Cracked</a>
+                <a onclick="addFilter('Whitelisted')">Whitelisted</a>
+            </div>
+        </div>
+    </div>
 
-  <div onclick="updateFilter()" style="width: 100px; height: 30px; display: flex; align-items: center; background-color: #dbbe00; color: #000; border-radius: 3px; margin: 0 auto;"><p style="margin: 0 auto">Search</p></div>
+    <br>
 
-  <br>
+    <div onclick="updateFilter()" class="disable-select" style="width: 100px; height: 30px; display: flex; align-items: center; background-color: #ffdd00; color: #000; border-radius: 3px; margin: 0 auto;"><p style="margin: 0 auto">Search</p></div>
+    
+    <br>
 
-  <div class="serverlist"></div>
+    <div id="serverlist"></div>
 
-  <br><br>
+    <br><br>
 
-  <h1>How It Works</h1>
-  <div style="color: #c8c8c8; font-family: 'Helvetica';">
-    <p style="text-indent: 2em;">
-      When you go to the Minecraft multiplayer menu, you can see some basic info about a server before you join it, like the version, player count, etc. Your Minecraft client is getting this information by pinging the server, requesting it for its Minecraft info, and the server responds with a packet containing all that info. Note that there's no verification in that process that ensures you're actually using the Minecraft client, the server just responds to whatever requests it gets. That means that you're able to send your own request from any program, not just Minecraft, which is how I'm able to get the information from all the servers in my database.
-    </p>
-    <p style="text-indent: 2em;">
-        The next logical step would be creating the database in the first place. I can ping a server with the same method I mentioned before in order to check if it's actually hosting a Minecraft server, and simply repeat that process for every possible IP. Minecraft uses IPv4 addresses to host servers, which can range from <code>1.0.0.0</code> to <code>255.255.255.255</code>. That means there's <code>255 * 256^3</code>, or <code>4,278,190,080</code> possible Minecraft server IPs. That's obviously a lot of IPs to go through. When you ping a server, you'll need a certain threshold when you decide that a server has been inactive for too long and must not be a Minecraft server. Usually about 3 seconds works well, but that means to go through every IP it would take 407 years! Luckily, pinging every server individually isn't necessary, since there are tools like <a style='text-underline-position: under; color:#4786c4' href='https://github.com/robertdavidgraham/masscan'>Masscan</a> that can send thousands of pings at once to make the process much more efficient, allowing you to ping every IP in under a day. Minecraft Java's default port is <code>25565</code>, so I run a Masscan on all IPs on port <code>25565</code> to get a list of active IPs, and from there I can ping them as a Minecraft server to get a list of all the active Minecraft servers. My bot constantly goes back over that list to ping the servers and get updated information.
-    </p>
-  </div>
+    <h1>How It Works</h1>
+    <div style="color: #c8c8c8; font-family: 'Helvetica';">
+        <p style="text-indent: 2em; padding: 0 5% 0 5%;">
+            When you go to the Minecraft multiplayer menu, you can see some basic info about a server before you join it, like the version, player count, etc. Your Minecraft client is getting this information by pinging the server, requesting it for its Minecraft info, and the server responds with a packet containing all that info. Note that there's no verification in that process that ensures you're actually using the Minecraft client, the server just responds to whatever requests it gets. That means that you're able to send your own request from any program, not just Minecraft, which is how I'm able to get the information from all of the servers in my database.
+        </p>
+        <p style="text-indent: 2em; padding: 0 5% 20px 5%;">
+                The next logical step would be creating the database in the first place. I can ping a server with the same method I mentioned before in order to check if it's actually hosting a Minecraft server, and simply repeat that process for every possible IP. The vast majority of Minecraft servers use IPv4, which can range from <code>1.0.0.0</code> to <code>255.255.255.255</code>. That means there's <code>255 * 256^3</code>, or <code>4,278,190,080</code> possible Minecraft server IPs. That's obviously a lot of IPs to go through, even for modern technology. When you ping a server, you'll need a certain threshold at which you decide that a server has been inactive for too long and must not be running. Usually about 5 seconds works well, but that means to go through every IP it would take 678 years! Luckily, you don't have to ping them one-by-one. Tools like <a style='text-underline-position: under; color:#4786c4' href='https://github.com/robertdavidgraham/masscan'>Masscan</a> can scan hundreds of thousands of IPs per second to make the process much more efficient, allowing you to check every address in under a day. Minecraft Java Edition's default port is <code>25565</code>, so I use Masscan to scan on that port and get a list of IPs that are accepting TCP connections, and from there I can ping them with Minecraft's protocol to determine which ones are Minecraft servers. That list of servers is then sent to a second host, which constantly goes back over that list and pings the servers to get updated information.
+        </p>
+    </div>
 
-  <div id="sidebar"></div>
-  <script src="sidebar.js"></script>
+    <div id="sidebar"></div>
+    <script src="sidebar.js"></script>
 
-  <script src="server-scanner.js"></script>
+    <script src="server-scanner.js"></script>
 </body>
 
 </html>
