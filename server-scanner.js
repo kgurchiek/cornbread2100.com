@@ -215,6 +215,16 @@ let loading = false;
 async function updateServers(preserve = false) {
     loading = true;
     let data;
+    let loadingSpinner;
+    if (preserve) Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
+    else {
+        Array.from(serverList.children).forEach(a => a.remove());
+        serverList.scrollTo(0, 0);
+        loadingSpinner = document.createElement('div');
+        loadingSpinner.className = 'loading-spinner';
+        serverList.appendChild(loadingSpinner);
+    }
+
     try {
         data = await (await fetch(`https://api.cornbread2100.com/servers?${args}`)).json();
     } catch (err) {
@@ -222,11 +232,8 @@ async function updateServers(preserve = false) {
         Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
         return;
     }
+    if (!preserve) loadingSpinner.remove();
     console.log(data);
-    if (!preserve) {
-        Array.from(serverList.children).forEach(a => a.remove());
-        serverList.scrollTo(0, 0);
-    } else Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
     for (const server of data) {
         const serverElement = document.createElement('div')
         serverElement.className = 'server';
