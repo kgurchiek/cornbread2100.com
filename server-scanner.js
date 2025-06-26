@@ -2,7 +2,7 @@ const limit = 20;
 let serverList = document.getElementById('serverlist');
 serverList.addEventListener('wheel', async (e) => {
     if (e.deltaY > 0 && serverList.scrollHeight - (serverList.scrollTop + serverList.clientHeight) <= 50) {
-        if (!loading) {
+        if (!(loading || done)) {
             args.set('skip', parseInt(args.get('skip')) + parseInt(args.get('limit')));
             updateServers(true);
         }
@@ -182,7 +182,27 @@ function updateFilter() {
     for (const item of document.getElementsByClassName('has-player-sample-filter')) args.append('hasPlayerSample', item.checked);
     for (const item of document.getElementsByClassName('online-player-filter')) args.append('onlinePlayer', item.value);
     for (const item of document.getElementsByClassName('past-player-filter')) args.append('playerHistory', item.value);
-    for (const item of document.getElementsByClassName('description-filter')) args.append('description', item.value);
+    for (const item of document.getElementsByClassName('description-filter')) {
+        let segments = [''];
+        let escaped = false;
+        for (let i = 0; i < item.value.length; i++) {
+            if (!escaped) {
+                if (item.value[i] == '\\') {
+                    escaped = true;
+                    continue;
+                }
+                if (item.value[i] == '"') {
+                    segments.push('');
+                    continue;
+                }
+            }
+            segments[segments.length - 1] += item.value[i];
+            escaped = false;
+        }
+        let quotes = segments.filter((a, i) => i % 2 == 1 && (i != segments.length - 1 || segments.length % 2 == 1));
+        if (quotes.length > 0) args.append('description', `%${quotes.join('%')}%`);
+        if (segments.filter((a, i) => i % 2 == 0 || !(i != segments.length - 1 || segments.length % 2 == 1)).join('').length > 0) args.append('descriptionVector', segments.join(''));
+    }
     for (const item of document.getElementsByClassName('seen-after-filter')) args.append('seenAfter', Math.floor(new Date(item.value).getTime() / 1000));
     // const seenAfterEnabled = document.getElementById('seenAfterEnabled').checked;
     for (const item of document.getElementsByClassName('ip-subnet-filter')) {
@@ -204,26 +224,30 @@ function updateFilter() {
     for (const item of document.getElementsByClassName('cracked-filter')) args.append('cracked', item.checked);
     for (const item of document.getElementsByClassName('whitelisted-filter')) args.append('whitelisted', item.checked);
 
-    console.log(args.toString());
     updateServers();
 }
 
 const cleanIp = (ip) => ('0'.repeat(8 - ip.toString(16).length) + ip.toString(16)).match(/.{1,2}/g).map(a => parseInt(a, 16)).join('.');
 const sanitize = (text) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
+function addLoadingSpinner() {
+    let loadingSpinner = document.createElement('div');
+    loadingSpinner.className = 'loading-spinner';
+    serverList.appendChild(loadingSpinner);
+    return loadingSpinner
+}
+
 let loading = false;
+let done = false;
 async function updateServers(preserve = false) {
     loading = true;
     let data;
-    let loadingSpinner;
-    if (preserve) Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
-    else {
+    if  (!preserve) {
+        done = false;
         Array.from(serverList.children).forEach(a => a.remove());
         serverList.scrollTo(0, 0);
-        loadingSpinner = document.createElement('div');
-        loadingSpinner.className = 'loading-spinner';
-        serverList.appendChild(loadingSpinner);
     }
+    let loadingSpinner = addLoadingSpinner();
 
     try {
         data = await (await fetch(`https://api.cornbread2100.com/servers?${args}`)).json();
@@ -232,7 +256,7 @@ async function updateServers(preserve = false) {
         Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
         return;
     }
-    if (!preserve) loadingSpinner.remove();
+    loadingSpinner.remove();
     console.log(data);
     for (const server of data) {
         const serverElement = document.createElement('div')
@@ -326,11 +350,11 @@ async function updateServers(preserve = false) {
         serverList.appendChild(serverElement);
     }
 
-    if (!preserve || data.length == limit) {
+    if (data.length == limit) {
         let loadingSpinner = document.createElement('div');
         loadingSpinner.className = 'loading-spinner';
         serverList.appendChild(loadingSpinner);
-    }
+    } else done = true;
 
     loading = false;
 }
