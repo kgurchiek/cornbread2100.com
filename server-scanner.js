@@ -248,7 +248,7 @@ async function updateServers(preserve = false) {
         serverElement.appendChild(content);
 
         const favicon = document.createElement('img');
-        favicon.src = `https://ping.cornbread2100.com/favicon?ip=${server.ip}&port=${server.port}`;
+        favicon.src = `https://ping.cornbread2100.com/favicon?ip=${server.ip}&port=${server.port}&errors=false`;
         favicon.alt = 'Favicon';
         content.appendChild(favicon);
 
