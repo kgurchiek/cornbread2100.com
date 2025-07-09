@@ -85,7 +85,6 @@ function createFilter(name, id, info, type, placeholder = '') {
     return element;
 }
 
-let filters = [];
 let usernames = ['Steve', 'Notch', 'jeb_'];
 function addFilter(type) {
     let element;
