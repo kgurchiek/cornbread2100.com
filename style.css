@@ -483,7 +483,7 @@ input[type="file"] {
     right: 5px;
     padding: 5px;
     border: none;
-    color: grey;
+    color: #c8c8c8;
     background-color: transparent;
     transition: color 0.5s;
 }
@@ -497,18 +497,74 @@ input[type="file"] {
     height: 20px;
 }
 
+.filter-info {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    padding: 5px;
+    border: none;
+    color: #c8c8c8;
+    background-color: transparent;
+    transition: color 0.5s;
+}
+
+.filter-info:hover {
+    color: #08a4f1;
+}
+
+.filter-info svg {
+    width: 20px;
+    height: 20px;
+}
+
+.filter-info .info-text {
+    color: #c8c8c8;
+    visibility: hidden;
+    width: max-content;
+    max-width: 30vw;
+    background-color: black;
+    text-align: center;
+    border: 2px solid #08a4f1;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    bottom: 100%;
+    transform: translateX(-50%);
+    white-space: pre-wrap;
+    line-height: 1.2;
+    opacity: 0%;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.filter-info .info-text br {
+    display: block;
+    margin-top: 0.6em;
+    content: "";
+}
+
+.info-text a {
+    color: rgb(104, 217, 255);
+}
+
+.filter-info:hover .info-text {
+    visibility: visible;
+    opacity: 100%;
+}
+
 .filter-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px; /* adjust as needed */
+    height: 40px;
     position: relative;
 }
 
 .filter-title {
     display: inline-block;
     font-size: 20px;
-    margin-top: 0; /* remove margin-top */
+    margin-top: 0;
 }
 
 .filter label {
@@ -612,11 +668,11 @@ input[type="file"] {
 }
 
 input:checked + .switch-slider {
-    background-color: #2196F3;
+    background-color: #ffdd00;
 }
 
 input:focus + .switch-slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #ffdd00;
 }
 
 input:checked + .switch-slider:before {

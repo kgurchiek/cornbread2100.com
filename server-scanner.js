@@ -39,19 +39,26 @@ dropdown.addEventListener('scroll', (e) => {
     }
 });
 
-const filterHeader = (title) => `<div class="filter-header">
+const filterHeader = (title, info) => `<div class="filter-header">
     <span class="filter-title">${title}</span>
     <button class="delete-filter" onclick="this.parentElement.parentElement.remove()">
         <svg fill="currentColor">
             <use href="#icon-x"></use>
         </svg>
     </button>
+    <button class="filter-info">
+        <svg fill="currentColor">
+            <use href="#icon-info"></use>
+        </svg>
+        <span class="info-text">${info}</span>
+    </button>
 </div>`;
 
-function createFilter(name, id, type) {
+function createFilter(name, id, info, type, placeholder = '') {
+    if (typeof placeholder == 'function') placeholder = placeholder();
     let element = document.createElement('div');
     element.className = 'filter';
-    element.innerHTML = filterHeader(name);
+    element.innerHTML = filterHeader(name, info);
 
     switch (type) {
         case 'boolean': {
@@ -63,7 +70,7 @@ function createFilter(name, id, type) {
         }
         case 'text': {
             element.innerHTML += `<label class="textbox">
-                    <input class="${id}" type="text">
+                    <input class="${id}" type="text" placeholder="${placeholder}">
                 </label>`
             break;
         }
@@ -79,68 +86,69 @@ function createFilter(name, id, type) {
 }
 
 let filters = [];
+let usernames = ['Steve', 'Notch', 'jeb_'];
 function addFilter(type) {
     let element;
 
     switch (type) {
         case 'Player Count': {
-            element = createFilter(type, 'player-count-filter', 'text');
+            element = createFilter(type, 'player-count-filter', 'How many players are on the server<br>Ex: <code>3</code>, <code>>1</code>, <code><=5</code>, <code>1-10</code>', 'text', '>0');
             break;
         }
         case 'Player Cap': {
-            element = createFilter(type, 'player-cap-filter', 'text');
+            element = createFilter(type, 'player-cap-filter', 'The player capacity of the server', 'text', '20');
             break;
         }
         case 'Full': {
-            element = createFilter(type, 'full-filter', 'boolean');
+            element = createFilter(type, 'full-filter', 'Whether or not the amount of players online has reached the server\'s max player capacity', 'boolean');
             break;
         }
         case 'Version': {
-            element = createFilter(type, 'version-filter', 'text');
+            element = createFilter(type, 'version-filter', 'Which Minecraft version the server is running<br>Note that this is frequently modified by third-party server software (e.g. "Paper 1.21.4").<br>This filter uses PostgreSQL\'s LIKE operator, allowing you to use wildcard characters as described <a target="_blank" href="https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE">here</a>.<br>Ex: <code>Paper:%</code>, <code>1.21._</code>, <code>%1.21.4%</code>', 'text', '%1.21.7%');
             break;
         }
         case 'Protocol': {
-            element = createFilter(type, 'protocol-filter', 'text');
+            element = createFilter(type, 'protocol-filter', 'Which protocol version the server is using<br>This is typically used to tell the actual underlying version of a server if they use a custom version name.<br>A list of all protocol versions can be found <a target="_blank" href="https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers">here</a>', 'text', '772');
             break;
         }
         case 'Has Player Sample': {
-            element = createFilter(type, 'has-player-sample-filter', 'boolean');
+            element = createFilter(type, 'has-player-sample-filter', 'Whether or not the server returns a list of online players in its ping response (the list shown when hovering over the player count in the multiplayer menu in-game)<br>This list is used for the Online Player and Past Player filters.', 'boolean');
             break;
         }
         case 'Online Player': {
-            element = createFilter(type, 'online-player-filter', 'text');
+            element = createFilter(type, 'online-player-filter', 'Finds a server that the player was playing on the last time it was pinged<br>This uses the server\'s player sample, which isn\'t always reliable. The vanilla Minecraft server limits this list to 12 players at a time, so any others simply won\'t be seen. This is also frequently modified to show custom messages rather than players.', 'text', () => usernames[Math.floor(Math.random() * usernames.length)]);
             break;
         }
         case 'Past Player': {
-            element = createFilter(type, 'past-player-filter', 'text');
+            element = createFilter(type, 'past-player-filter', 'Finds a server that the player has been seen playing on before<br>This uses the server\'s player sample, which isn\'t always reliable. The vanilla Minecraft server limits this list to 12 players at a time, so any others simply won\'t be seen. This is also frequently modified to show custom messages rather than players.', 'text', () => usernames[Math.floor(Math.random() * usernames.length)]);
             break;
         }
         case 'Has Favicon': {
-            element = createFilter(type, 'has-favicon-filter', 'boolean');
+            element = createFilter(type, 'has-favicon-filter', 'Whether or not the server uses a custom favicon (the image shown on the multiplayer menu)', 'boolean');
             break;
         }
         case 'Description': {
-            element = createFilter(type, 'description-filter', 'text');
+            element = createFilter(type, 'description-filter', 'The server\'s description/"message of the day" (the text shown below its name in the multiplayer menu)<br>By default this filter searches for descriptions with similar words, regardless of order. To search for an exact word or phrase, wrap it in double quotes.<br>Ex: <code>A "Minecraft Server"</code>', 'text', 'A Minecraft Server');
             break;
         }
         case 'Seen After': {
-            element = createFilter(type, 'seen-after-filter', 'date');
+            element = createFilter(type, 'seen-after-filter', 'How recently the server has responded to a ping<br>The more recent this date is, the more likely the server is to be online.', 'date');
             break;
         }
         case 'IP Subnet': {
-            element = createFilter(type, 'ip-subnet-filter', 'text');
+            element = createFilter(type, 'ip-subnet-filter', 'Searches for servers whose IPv4 addresses are within the given subnet', 'text', '1.0.0.0/8');
             break;
         }
         case 'Port': {
-            element = createFilter(type, 'port-filter', 'text');
+            element = createFilter(type, 'port-filter', 'The server\'s port', 'text', '25565');
             break;
         }
         case 'Cracked': {
-            element = createFilter(type, 'cracked-filter', 'boolean');
+            element = createFilter(type, 'cracked-filter', 'If true, the server does not require account authentication to join', 'boolean');
             break;
         }
         case 'Whitelisted': {
-            element = createFilter(type, 'whitelisted-filter', 'boolean');
+            element = createFilter(type, 'whitelisted-filter', 'If true, the server only allows certain accounts to join the server, preventing unknown users from joining', 'boolean');
             break;
         }
     }
@@ -242,7 +250,8 @@ let done = false;
 async function updateServers(preserve = false) {
     loading = true;
     let data;
-    if  (!preserve) {
+    if  (preserve) Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
+    else {
         done = false;
         Array.from(serverList.children).forEach(a => a.remove());
         serverList.scrollTo(0, 0);
@@ -256,6 +265,7 @@ async function updateServers(preserve = false) {
         Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
         return;
     }
+    console.log(loadingSpinner)
     loadingSpinner.remove();
     console.log(data);
     for (const server of data) {
