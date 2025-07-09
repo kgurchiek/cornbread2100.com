@@ -143,11 +143,11 @@ function addFilter(type) {
             break;
         }
         case 'Cracked': {
-            element = createFilter(type, 'cracked-filter', 'If true, the server does not require account authentication to join', 'boolean');
+            element = createFilter(type, 'cracked-filter', 'If true, the server does not require account authentication to join<br>Note: servers are checked for authentication through a separate process from the typical SLP scanner. The authentication scanner is run much less often than the main scanner, and it isn\'t always reliable. This means that by using this filter you may be losing new servers that haven\'t been checked yet.', 'boolean');
             break;
         }
         case 'Whitelisted': {
-            element = createFilter(type, 'whitelisted-filter', 'If true, the server only allows certain accounts to join the server, preventing unknown users from joining', 'boolean');
+            element = createFilter(type, 'whitelisted-filter', 'If true, the server only allows certain accounts to join the server, preventing unknown users from joining<br>Note: servers are checked for a whitelist through a separate process from the typical SLP scanner. Due to Mojang API rate limits, the whitelist scanner is incredibly slow by comparison, so only a small fraction of servers get scanned. It\'s only recommended to use this scanner if you\'re in a rush and don\'t have time to check for whitelists manually.', 'boolean');
             break;
         }
     }
@@ -177,7 +177,6 @@ function updateFilter() {
         } else minPlayers = maxPlayers = parseInt(playerCount);
         if (minPlayers == maxPlayers) args.append('playerCount', minPlayers);
         else {
-            console.log(minPlayers, maxPlayers)
             if (minPlayers != null) args.append('minPlayers', minPlayers);
             if (maxPlayers != null) args.append('maxPlayers', maxPlayers);
         }
@@ -264,9 +263,7 @@ async function updateServers(preserve = false) {
         Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
         return;
     }
-    console.log(loadingSpinner)
     loadingSpinner.remove();
-    console.log(data);
     for (const server of data) {
         const serverElement = document.createElement('div')
         serverElement.className = 'server';
@@ -347,12 +344,13 @@ async function updateServers(preserve = false) {
             fetch(`https://api.cornbread2100.com/playerHistory?ip=${server.ip}&port=${server.port}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 Array.from(playerList.children).filter(a => a.className == 'loading-spinner').forEach(a => a.remove());
-                if (data.length > 0) for (const player of data) {
-                    console.log(player.lastSession, server.lastSeen)
-                    if (player.lastSession == server.lastSeen) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
+                data = data.filter(a => a.lastSession == server.lastSeen)
+                if (data.length == 0) {
+                    playerList.remove();
+                    return;
                 }
+                for (const player of data) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
             })
         }
 
