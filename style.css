@@ -682,14 +682,21 @@ input:checked + .switch-slider:before {
 }
 
 #serverlist {
+    background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff, #ff0000, #0000ff, #00ff00); /* first and last color same */
+    background-size: 400% 400%;
+    animation: gradientMove 8s linear infinite alternate; /* alternate for smooth ping-pong */
     width: 90%;
     height: 90%;
     margin: 0 auto;
     padding-top: 10px;
     padding-bottom: 10px;
-    background-color: #222;
     border-radius: 1rem;
     overflow: auto;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 div.serverlist::-webkit-scrollbar {
@@ -701,13 +708,22 @@ div.serverlist::-webkit-scrollbar-thumb {
 }
 
 .server {
-    width: 95%;
+    width: 85%;
     height: 250px;
-    margin: 10px auto;
+    margin: 20px auto;
     background-color: #333;
     border-radius: 1rem;
     text-align: center;
     font-family: mojangles;
+    padding: 16px;
+    box-shadow: 0 0 10px #ffdd0099;
+    transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+}
+
+.server:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px #ffdd00ff;
+    border: 1px solid #ffdd00;
 }
 
 .server img {

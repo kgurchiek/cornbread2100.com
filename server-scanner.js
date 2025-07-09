@@ -268,8 +268,8 @@ async function updateServers(preserve = false) {
         const serverElement = document.createElement('div')
         serverElement.className = 'server';
 
-        const ip = document.createElement('h3');
-        ip.style = 'padding-top: 20px';
+        const ip = document.createElement('h2');
+        ip.style = 'text-decoration: underline;';
         ip.innerText = `${cleanIp(server.ip)}${server.port == 25565 ? '' : `:${server.port}`}`;
         serverElement.appendChild(ip);
 
@@ -335,7 +335,7 @@ async function updateServers(preserve = false) {
             info.appendChild(playerList);
             
             const playerListText = document.createElement('div');
-            playerListText.style = 'margin: 5px 10px; overflow-x: scroll; white-space: nowrap; line-height: 1.6;';
+            playerListText.style = 'margin: 5px 10px; overflow-x: scroll; white-space: nowrap; line-height: 1.6; height: 100%; width: 100%;';
             playerList.appendChild(playerListText);
             let loadingSpinner = document.createElement('div');
             loadingSpinner.className = 'loading-spinner';
