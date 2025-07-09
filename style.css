@@ -711,7 +711,7 @@ div.serverlist::-webkit-scrollbar-thumb {
     width: 85%;
     height: 250px;
     margin: 20px auto;
-    background: #00000088;
+    background-color: #00000088;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     border-radius: 1rem;
@@ -719,13 +719,14 @@ div.serverlist::-webkit-scrollbar-thumb {
     font-family: mojangles;
     padding: 16px;
     box-shadow: 0 0 10px #ffdd0099;
-    transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border 0.2s, background-color 0.2s;
 }
 
 .server:hover {
     transform: scale(1.03);
     box-shadow: 0 0 30px #ffdd00ff;
     border: 1px solid #ffdd00;
+    background-color: #000000bb;
 }
 
 .server img {
