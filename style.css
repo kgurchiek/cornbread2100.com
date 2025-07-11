@@ -684,7 +684,7 @@ input:checked + .switch-slider:before {
 #serverlist {
     background: linear-gradient(135deg, #ff3333, #33ff33, #3333ff, #ff3333, #3333ff, #33ff33); /* first and last color same */
     background-size: 400% 400%;
-    animation: gradientMove 15s ease infinite alternate;
+    animation: gradientMove 45s ease infinite alternate;
     width: 90%;
     height: 90%;
     margin: 0 auto;
