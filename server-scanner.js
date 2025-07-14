@@ -315,12 +315,12 @@ async function updateServers(preserve = false) {
         info.appendChild(version);
         
         const lastSeen = document.createElement('div');
-        lastSeen.style = 'grid-area: 1 / 4; text-align: left;';
+        lastSeen.style = 'grid-area: 1 / 4 / 1 / 6; text-align: left;';
         lastSeen.innerText = Math.floor(new Date().getTime() / 1000) - server.lastSeen < 86400 ? new Date(server.lastSeen * 1000).toLocaleTimeString() : new Date(server.lastSeen * 1000).toLocaleDateString();
         info.appendChild(lastSeen);
 
         const cracked = document.createElement('div');
-        cracked.style = 'grid-area: 2 / 4; text-align: left;';
+        cracked.style = 'grid-area: 2 / 4 / 2 / 6; text-align: left;';
         cracked.innerText = `🔒 ${server.cracked == null ? 'Unknown' : server.cracked ? 'Cracked' : 'Premium'}`;
         info.appendChild(cracked);
 
