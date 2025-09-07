@@ -1,30 +1,20 @@
-var accessToken = 'ghp_nf8tOOjB8U692';
-accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
-
 (async () => {
-  const commitCount = (await (await fetch('https://api.github.com/repos/landgreen/n-gon/contributors', {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
-    }
-  })).json())[0].contributions;
+  const controllerCheckbox = document.getElementById('controllerCheckbox');
+  const mobileCheckbox = document.getElementById('mobileCheckbox');
+  let loadingSpinner = document.getElementsByClassName('loading-spinner')[0];
+
+  const commitCount = (await (await fetch('https://api.github.com/repos/landgreen/n-gon/contributors')).json())[0].contributions;
   
   var allCommits = [];
   for (var i = 0; i < (commitCount / 100) - 1; i++) {
-    const commits = await (await fetch(`https://api.github.com/repos/landgreen/n-gon/commits?per_page=100&page=${i + 1}`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    })).json();
+    const commits = await (await fetch(`https://api.github.com/repos/landgreen/n-gon/commits?per_page=100&page=${i + 1}`)).json();
     allCommits = allCommits.concat(commits)
   }
-  const commits = await (await fetch(`https://api.github.com/repos/landgreen/n-gon/commits?per_page=${commitCount % 100}&page=${Math.floor(commitCount / 100)}`, {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
-    }
-  })).json();
+  const commits = await (await fetch(`https://api.github.com/repos/landgreen/n-gon/commits?per_page=${commitCount % 100}&page=${Math.floor(commitCount / 100)}`)).json();
   allCommits = allCommits.concat(commits);
   allCommits.sort((a, b) => ((new Date(b.commit.author.date)).getTime() - new Date(a.commit.author.date).getTime()));
   
+  loadingSpinner.remove();
   for (var i = 0; i < allCommits.length; i++) {
     const commit = allCommits[i];
     const commitBox = document.createElement('div');
@@ -45,10 +35,7 @@ accessToken += 'UzbzPOUPA9XlxHMek3MGsNC';
     link.appendChild(commitBox);
     document.body.appendChild(link);
   }
-
-  const controllerCheckbox = document.getElementById('controllerCheckbox');
-  const mobileCheckbox = document.getElementById('mobileCheckbox');
-
+  
   if (controllerCheckbox.checked) {
     for (const button of document.body.children) if (button.children.length > 0 && button.children[0].className == 'box') button.href += '&mobile=true';
   } else {

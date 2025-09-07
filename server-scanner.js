@@ -283,7 +283,7 @@ async function updateServers(preserve = false) {
         content.appendChild(favicon);
 
         const info = document.createElement('div');
-        info.style = 'width:100%; display: grid; grid-template-columns: repeat(6, 15%); gap: 5%; grid-template-rows: repeat(6, 37px);';
+        info.style = 'width:100%; display: grid; grid-template-columns: repeat(4, 15%); gap: 5%; grid-template-rows: repeat(4, 37px);';
         content.appendChild(info);
 
         const motd = document.createElement('div');
@@ -325,7 +325,7 @@ async function updateServers(preserve = false) {
         info.appendChild(cracked);
 
         const playerCount = document.createElement('div');
-        playerCount.style = 'grid-area: 4 / 1; text-align: left;';
+        playerCount.style = 'grid-area: 4 / 1 / 4 / 3; text-align: left;';
         playerCount.innerText = `${server.players.online} / ${server.players.max}`;
         info.appendChild(playerCount);
 

@@ -44,7 +44,6 @@ function changeFavicon(src) {
     if (index >= allCommits.length) index = allCommits.length - 1;
   }
   const sha = allCommits[index].sha;
-  const treeSha = allCommits[index].commit.tree.sha;
   const date = new Date(allCommits[index].commit.author.date);
   console.log(`Using commit ${index + 1} from ${date.getMonth() + 1}/${date.getDate() + 1}/${date.getFullYear()} (MM/DD/YYYY)`);
   console.log(`https://github.com/landgreen/n-gon/tree/${sha}`);
@@ -81,7 +80,6 @@ function changeFavicon(src) {
       document.write(html);
       document.body.style.display = 'none';
 
-      var fullScript = '';
       for (const scriptName of scripts) {
         const scriptText = (await (await fetch(`https://raw.githubusercontent.com/landgreen/n-gon/${sha}/${scriptName}`)).text()).replaceAll('https://landgreen.github.io/sidescroller/index.html?', `${location.href}${location.href.includes('?') ? '' : '?'}`).replaceAll('https://landgreen.github.io/n-gon/index.html?', `${location.href}${location.href.includes('?') ? '' : '?'}`);
         if (scriptText.startsWith('404')) continue;
@@ -92,13 +90,15 @@ function changeFavicon(src) {
       }
 
       document.body.style.display = '';
-      oldGetUrlVars = getUrlVars;
-      getUrlVars = () => {
-        const result = oldGetUrlVars();
-        delete result.commit;
-        delete result.mobile;
-        delete result.controller;
-        return result;
+      if (window.getUrlVars != null) {
+        oldGetUrlVars = getUrlVars;
+        getUrlVars = () => {
+          const result = oldGetUrlVars();
+          delete result.commit;
+          delete result.mobile;
+          delete result.controller;
+          return result;
+        }
       }
       window.dispatchEvent(new Event('load'));
       if (url.searchParams.get('mobile') == 'true') {
