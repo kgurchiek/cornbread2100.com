@@ -420,6 +420,15 @@ input[type="file"] {
     color: black;
 }
 
+.dropdown-text {
+    transition: none;
+}
+
+#dropdown-button:hover .dropdown-text {
+    transform: rotate(180deg);
+    transition: transform 0.5s;
+}
+
 .dropdown-content {
     max-height: 0px;
     overflow-y: scroll;
@@ -707,6 +716,25 @@ div.serverlist::-webkit-scrollbar-thumb {
     display: none
 }
 
+#search-button {
+    width: 100px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    background-color:
+    #ffdd00;
+    color:
+    #000;
+    border-radius: 3px;
+    margin: 0 auto;
+    transform: scale(1.2);
+    transition: transform 0.5s;
+}
+
+#search-button:hover {
+    transform: scale(1.5);
+}
+
 .server {
     width: 85%;
     height: 250px;
@@ -746,6 +774,88 @@ div.serverlist::-webkit-scrollbar-thumb {
     text-align: left;
     font-family: mojangles;
     overflow: auto;
+}
+
+#error-container {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+}
+
+.error {
+    position: relative;
+    background-color: #880000;
+    border: 2px solid #ff0000;
+    border-radius: 1rem;
+    padding: 10px;
+    margin: 5px 0px;
+    min-width: 100px;
+}
+
+@keyframes alert {
+    from {
+        opacity: 0;
+        transform: translateX(100%)
+    }
+    
+    to {
+        opacity: 100%;
+        transform: translateX(0)
+    }
+}
+
+.error.alert {
+    animation: alert 0.5s;
+}
+
+@keyframes raise {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.error.raise {
+    animation: raise 0.5s;
+}
+
+@keyframes remove {
+    from {
+        opacity: 100%;
+        transform: translateX(0)
+    }
+    
+    to {
+        opacity: 0;
+        transform: translateX(100%)
+    }
+}
+
+.error.remove {
+    animation: remove 0.5s;
+}
+
+.delete-error {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    border: none;
+    color: #c8c8c8;
+    background-color: transparent;
+}
+
+.delete-error svg {
+    width: 20px;
+    height: 20px;
+    transition: filter 0.2s;
+}
+
+.delete-error:hover svg {
+    filter: drop-shadow(0 0 2px #fff);
 }
 
 div.playerlist::-webkit-scrollbar {

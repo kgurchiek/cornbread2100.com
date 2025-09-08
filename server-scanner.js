@@ -163,7 +163,7 @@ function updateFilter() {
     args.set('skip', 0);
 
     for (const item of document.getElementsByClassName('player-count-filter')) {
-        let playerCount = item.value.replaceAll(' ', '');
+        let playerCount = parseInt(item.value || item.placeholder);
         let minPlayers;
         let maxPlayers;
         if (playerCount.startsWith('>=')) minPlayers = parseInt(playerCount.substring(2));
@@ -181,28 +181,29 @@ function updateFilter() {
             if (maxPlayers != null) args.append('maxPlayers', maxPlayers);
         }
     }
-    for (const item of document.getElementsByClassName('player-cap-filter')) args.append('playerLimit', item.value);
+    for (const item of document.getElementsByClassName('player-cap-filter')) args.append('playerLimit', item.value || item.placeholder);
     for (const item of document.getElementsByClassName('full-filter')) args.append('full', item.checked);
-    for (const item of document.getElementsByClassName('version-filter')) args.append('version', item.value);
-    for (const item of document.getElementsByClassName('protocol-filter')) if (!isNaN(parseInt(item.value))) args.append('protocol', parseInt(protocol(item.value)));
+    for (const item of document.getElementsByClassName('version-filter')) args.append('version', item.value || item.placeholder);
+    for (const item of document.getElementsByClassName('protocol-filter')) if (!isNaN(parseInt(item.value || item.placeholder))) args.append('protocol', parseInt(protocol(item.value || item.placeholder)));
     for (const item of document.getElementsByClassName('has-player-sample-filter')) args.append('hasPlayerSample', item.checked);
-    for (const item of document.getElementsByClassName('online-player-filter')) args.append('onlinePlayer', item.value);
-    for (const item of document.getElementsByClassName('past-player-filter')) args.append('playerHistory', item.value);
+    for (const item of document.getElementsByClassName('online-player-filter')) args.append('onlinePlayer', item.value || item.placeholder);
+    for (const item of document.getElementsByClassName('past-player-filter')) args.append('playerHistory', item.value || item.placeholder);
     for (const item of document.getElementsByClassName('description-filter')) {
+        let value = item.value || item.placeholder;
         let segments = [''];
         let escaped = false;
-        for (let i = 0; i < item.value.length; i++) {
+        for (let i = 0; i < value.length; i++) {
             if (!escaped) {
-                if (item.value[i] == '\\') {
+                if (value[i] == '\\') {
                     escaped = true;
                     continue;
                 }
-                if (item.value[i] == '"') {
+                if (value[i] == '"') {
                     segments.push('');
                     continue;
                 }
             }
-            segments[segments.length - 1] += item.value[i];
+            segments[segments.length - 1] += value[i];
             escaped = false;
         }
         let quotes = segments.filter((a, i) => i % 2 == 1 && (i != segments.length - 1 || segments.length % 2 == 1));
@@ -214,7 +215,7 @@ function updateFilter() {
     for (const item of document.getElementsByClassName('ip-subnet-filter')) {
         let minIp = [];
         let maxIp = [];
-        for (let range of item.value.split(',')) {
+        for (let range of (item.value || item.placeholder).split(',')) {
             let [ip, subnet] = range.trim().split('/');
             ip = ip.split('.').reverse().map((a, i) => parseInt(a) * 256**i).reduce((a, b) => a + b, 0);
             if (subnet == null || subnet >= 32) args.append('ip', ip);
@@ -226,7 +227,7 @@ function updateFilter() {
         args.append('minIp', JSON.stringify(minIp));
         args.append('maxIp', JSON.stringify(maxIp));
     }
-    for (const item of document.getElementsByClassName('port-filter')) if (!isNaN(parseInt(item.value))) args.append('port', parseInt(item.value));
+    for (const item of document.getElementsByClassName('port-filter')) if (!isNaN(parseInt(item.value || item.placeholder))) args.append('port', parseInt(item.value || item.placeholder));
     for (const item of document.getElementsByClassName('cracked-filter')) args.append('cracked', item.checked);
     for (const item of document.getElementsByClassName('whitelisted-filter')) args.append('whitelisted', item.checked);
 
@@ -263,6 +264,12 @@ async function updateServers(preserve = false) {
         Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
         return;
     }
+
+    if (data.error) {
+        error(data.error);
+        return;
+    }
+
     loadingSpinner.remove();
     for (const server of data) {
         const serverElement = document.createElement('div')
@@ -372,3 +379,46 @@ args.set('descending', true);
 args.set('limit', limit);
 args.set('skip', 0);
 updateServers();
+
+let errorContainer = document.getElementById('error-container');
+let errorQueue = [];
+function error(message, header = 'Error') {
+    let error = document.createElement('div');
+    error.classList.add('error', 'alert');
+    error.innerHTML = `
+            <button class="delete-error" onclick="this.parentElement.classList.add('remove')">
+                <svg fill="currentColor">
+                    <use href="#icon-x"></use>
+                </svg>
+            </button>
+            <strong>${header}</strong>
+            <br>
+            ${message}
+        `;
+    error.addEventListener('animationend', (a) => {
+        switch (a.animationName) {
+            case 'alert': {
+                error.classList.remove('alert');
+                break;
+            }
+            case 'raise': {
+                error.classList.remove('raise');
+                break;
+            }
+            case 'remove': {
+                error.remove();
+                break;
+            }
+        }
+    });
+    errorQueue.push(error);
+}
+
+setInterval(() => {
+    if (errorQueue.length == 0) return;
+    if (document.getElementsByClassName('alert').length > 0 || document.getElementsByClassName('raise').length > 0) return;
+    let error = errorQueue.splice(0, 1)[0];
+    for (let element of errorContainer.children) element.classList.add('raise');
+    errorContainer.appendChild(error);
+    setTimeout(() => error.classList.add('remove'), 10000);
+});

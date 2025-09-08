@@ -44,7 +44,7 @@
 
     <div id="filters">
         <div id="add-filter" class="disable-select">
-            <div id="dropdown-button" onclick="toggleDropdown()">+</div>
+            <div id="dropdown-button" onclick="toggleDropdown()"><div class="dropdown-text">+</div></div>
             <div id="filter-dropdown" class="dropdown-content fade-bottom">
                 <a onclick="addFilter('Player Count')">Player Count</a>
                 <a onclick="addFilter('Player Cap')">Player Cap</a>
@@ -67,7 +67,7 @@
 
     <br>
 
-    <div onclick="updateFilter()" class="disable-select" style="width: 100px; height: 30px; display: flex; align-items: center; background-color: #ffdd00; color: #000; border-radius: 3px; margin: 0 auto;"><p style="margin: 0 auto">Search</p></div>
+    <div onclick="updateFilter()" id="search-button" class="disable-select"><p style="margin: 0 auto">Search</p></div>
     
     <br>
 
@@ -85,10 +85,13 @@
         </p>
     </div>
 
+    <div id="error-container"></div>
+
     <div id="sidebar"></div>
     <script src="sidebar.js"></script>
 
     <script src="server-scanner.js"></script>
+
 </body>
 
 </html>
