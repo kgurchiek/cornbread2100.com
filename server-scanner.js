@@ -163,7 +163,7 @@ function updateFilter() {
     args.set('skip', 0);
 
     for (const item of document.getElementsByClassName('player-count-filter')) {
-        let playerCount = parseInt(item.value || item.placeholder);
+        let playerCount = item.value || item.placeholder;
         let minPlayers;
         let maxPlayers;
         if (playerCount.startsWith('>=')) minPlayers = parseInt(playerCount.substring(2));
