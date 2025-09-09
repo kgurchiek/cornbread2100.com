@@ -486,6 +486,68 @@ input[type="file"] {
     height: 80px;
 }
 
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 100%;
+    }
+}
+
+.filter.fade-in {
+    animation: fade-in 1s;
+}
+
+@keyframes lower-filter {
+    from {
+        transform: translateY(-80px) scale(var(--scale, 1));
+    }
+
+    to {
+        transform: translateY(0) scale(var(--scale, 1));
+    }
+}
+
+.lower {
+    animation: lower-filter 0.3s;
+}
+
+.filter.fade-in.lower {
+    animation: fade-in 1s, lower-filter 0.3s;
+}
+
+@keyframes raise-filter {
+    from {
+        transform: translateY(0) scale(var(--scale, 1));
+    }
+
+    to {
+        transform: translateY(-94px) scale(var(--scale, 1));
+    }
+}
+
+.raise {
+    animation: raise-filter 0.3s;
+}
+
+@keyframes remove-filter {
+    from {
+        opacity: 100%;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(75%);
+    }
+}
+
+.remove-filter {
+    animation: remove-filter 0.3s;
+}
+
 .delete-filter {
     position: absolute;
     top: 5px;
@@ -690,7 +752,12 @@ input:checked + .switch-slider:before {
     transform: translateX(39px);
 }
 
-#serverlist {
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+#server-list {
     background: linear-gradient(135deg, #ff3333, #33ff33, #3333ff, #ff3333, #3333ff, #33ff33); /* first and last color same */
     background-size: 400% 400%;
     animation: gradientMove 45s ease infinite alternate;
@@ -703,16 +770,19 @@ input:checked + .switch-slider:before {
     overflow: auto;
 }
 
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+#server-list.lower {
+    animation: lower-filter 0.3s, gradientMove 45s ease infinite alternate;
 }
 
-div.serverlist::-webkit-scrollbar {
+#server-list.raise {
+    animation: raise-filter 0.3s, gradientMove 45s ease infinite alternate;
+}
+
+div.server-list::-webkit-scrollbar {
     display: none
 }
 
-div.serverlist::-webkit-scrollbar-thumb {
+div.server-list::-webkit-scrollbar-thumb {
     display: none
 }
 
@@ -727,6 +797,7 @@ div.serverlist::-webkit-scrollbar-thumb {
     #000;
     border-radius: 3px;
     margin: 0 auto;
+    --scale: 1.2;
     transform: scale(1.2);
     transition: transform 0.5s;
 }
@@ -787,28 +858,26 @@ div.serverlist::-webkit-scrollbar-thumb {
     background-color: #880000;
     border: 2px solid #ff0000;
     border-radius: 1rem;
-    padding: 10px;
+    padding: 10px 40px 10px 10px;
     margin: 5px 0px;
     min-width: 100px;
 }
 
 @keyframes alert {
     from {
-        opacity: 0;
         transform: translateX(100%)
     }
     
     to {
-        opacity: 100%;
         transform: translateX(0)
     }
 }
 
 .error.alert {
-    animation: alert 0.5s;
+    animation: alert 0.3s;
 }
 
-@keyframes raise {
+@keyframes raise-alert {
     from {
         transform: translateY(100%);
     }
@@ -819,23 +888,23 @@ div.serverlist::-webkit-scrollbar-thumb {
 }
 
 .error.raise {
-    animation: raise 0.5s;
+    animation: raise-alert 0.3s;
 }
 
-@keyframes remove {
+@keyframes remove-alert {
     from {
         opacity: 100%;
         transform: translateX(0)
     }
-    
+
     to {
         opacity: 0;
-        transform: translateX(100%)
+        transform: translateX(75%)
     }
 }
 
 .error.remove {
-    animation: remove 0.5s;
+    animation: remove-alert 0.3s;
 }
 
 .delete-error {
@@ -849,8 +918,8 @@ div.serverlist::-webkit-scrollbar-thumb {
 }
 
 .delete-error svg {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     transition: filter 0.2s;
 }
 

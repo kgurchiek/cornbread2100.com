@@ -1,5 +1,7 @@
 const limit = 20;
-let serverList = document.getElementById('serverlist');
+let searchButton = document.getElementById('search-button');
+let serverList = document.getElementById('server-list');
+let howItWorks = document.getElementById('how-it-works');
 serverList.addEventListener('wheel', async (e) => {
     if (e.deltaY > 0 && serverList.scrollHeight - (serverList.scrollTop + serverList.clientHeight) <= 50) {
         if (!(loading || done)) {
@@ -40,8 +42,8 @@ dropdown.addEventListener('scroll', (e) => {
 });
 
 const filterHeader = (title, info) => `<div class="filter-header">
-    <span class="filter-title">${title}</span>
-    <button class="delete-filter" onclick="this.parentElement.parentElement.remove()">
+    <span class="filter-title disable-select">${title}</span>
+    <button class="delete-filter" onclick="removeFilter(this.parentElement.parentElement)">
         <svg fill="currentColor">
             <use href="#icon-x"></use>
         </svg>
@@ -85,7 +87,14 @@ function createFilter(name, id, info, type, placeholder = '') {
     return element;
 }
 
+function removeFilter(filter) {
+    for (let element of [searchButton, serverList, howItWorks].concat(Array.from(filterContainer.children).slice(Array.from(filterContainer.children).indexOf(filter) + 1))) element.classList.add('raise');
+    filter.classList.add('remove-filter');
+}
+
+let filterContainer = document.getElementById('filters');
 let usernames = ['Steve', 'Notch', 'jeb_'];
+let filterQueue = [];
 function addFilter(type) {
     let element;
 
@@ -135,7 +144,7 @@ function addFilter(type) {
             break;
         }
         case 'IP Subnet': {
-            element = createFilter(type, 'ip-subnet-filter', 'Searches for servers whose IPv4 addresses are within the given subnet', 'text', '1.0.0.0/8');
+            element = createFilter(type, 'ip-subnet-filter', 'Searches for servers whose IPv4 addresses are within the given subnet', 'text', '1.2.3.4, 1.0.0.0/8');
             break;
         }
         case 'Port': {
@@ -152,8 +161,55 @@ function addFilter(type) {
         }
     }
 
-    document.getElementById('filters').appendChild(element);
+    element.addEventListener('animationend', (a) => {
+        switch (a.animationName) {
+            case 'fade-in': {
+                element.classList.remove('fade-in');
+                break;
+            }
+            case 'lower-filter': {
+                element.classList.remove('lower');
+                break;
+            }
+            case 'raise-filter': {
+                element.classList.remove('raise');
+                break;
+            }
+            case 'remove-filter': {
+                element.remove();
+                break;
+            }
+        }
+    });
+
+    filterQueue.push(element);
 }
+
+
+[searchButton, serverList, howItWorks].map(a =>
+    a.addEventListener('animationend', (b) => {
+        switch (b.animationName) {
+            case 'lower-filter': {
+                a.classList.remove('lower');
+                break;
+            }
+            case 'raise-filter': {
+                a.classList.remove('raise');
+                break;
+            }
+        }
+    })
+)
+
+setInterval(() => {
+    if (filterQueue.length == 0) return;
+    if (document.getElementsByClassName('filter lower').length > 0) return;
+    let filter = filterQueue.splice(0, 1)[0];
+    filter.classList.add('fade-in');
+    for (let element of [searchButton, serverList, howItWorks].concat(Array.from(filterContainer.children).slice(1))) element.classList.add('lower');
+    if (filterContainer.children.length == 1) filterContainer.appendChild(filter);
+    else filterContainer.insertBefore(filter, filterContainer.children[1]);
+});
 
 function updateFilter() {
     args = new URLSearchParams();
@@ -166,25 +222,52 @@ function updateFilter() {
         let playerCount = item.value || item.placeholder;
         let minPlayers;
         let maxPlayers;
-        if (playerCount.startsWith('>=')) minPlayers = parseInt(playerCount.substring(2));
-        else if (playerCount.startsWith('<=')) maxPlayers = parseInt(playerCount.substring(2));
-        else if (playerCount.startsWith('>')) minPlayers = parseInt(playerCount.substring(1)) + 1;
-        else if (playerCount.startsWith('<')) maxPlayers = parseInt(playerCount.substring(1)) - 1;
+        if (playerCount.startsWith('>=')) minPlayers = playerCount.substring(2);
+        else if (playerCount.startsWith('<=')) maxPlayers = playerCount.substring(2);
+        else if (playerCount.startsWith('>')) minPlayers = playerCount.substring(1);
+        else if (playerCount.startsWith('<')) maxPlayers = playerCount.substring(1);
         else if (playerCount.includes('-')) {
             const [min, max] = playerCount.split('-');
-            minPlayers = parseInt(min);
-            maxPlayers = parseInt(max);
-        } else minPlayers = maxPlayers = parseInt(playerCount);
+            minPlayers = min;
+            maxPlayers = max;
+        } else minPlayers = maxPlayers = playerCount;
+        
+        if (isNaN(minPlayers)) {
+            error(`Invalid player count filter ("${minPlayers}" is not a number)`);
+            return;
+        }
+        if (isNaN(maxPlayers)) {
+            error(`Invalid player count filter ("${maxPlayers}" is not a number)`);
+            return;
+        }
+
+        if (minPlayers != null) minPlayers = parseInt(minPlayers);
+        if (maxPlayers != null) maxPlayers = parseInt(maxPlayers);
+        if (playerCount.startsWith('>')) minPlayers++;
+        if (playerCount.startsWith('<')) maxPlayers--;
+
         if (minPlayers == maxPlayers) args.append('playerCount', minPlayers);
         else {
             if (minPlayers != null) args.append('minPlayers', minPlayers);
             if (maxPlayers != null) args.append('maxPlayers', maxPlayers);
         }
     }
-    for (const item of document.getElementsByClassName('player-cap-filter')) args.append('playerLimit', item.value || item.placeholder);
+    for (const item of document.getElementsByClassName('player-cap-filter')) {
+        if (isNaN(parseInt(item.value || item.placeholder))) {
+            error(`Invalid player limit filter ("${item.value || item.placeholder}" is not a number)`)
+            return;
+        }
+        args.append('playerLimit', item.value || item.placeholder);
+    }
     for (const item of document.getElementsByClassName('full-filter')) args.append('full', item.checked);
     for (const item of document.getElementsByClassName('version-filter')) args.append('version', item.value || item.placeholder);
-    for (const item of document.getElementsByClassName('protocol-filter')) if (!isNaN(parseInt(item.value || item.placeholder))) args.append('protocol', parseInt(protocol(item.value || item.placeholder)));
+    for (const item of document.getElementsByClassName('protocol-filter')) {
+        if (isNaN(parseInt(item.value || item.placeholder))) {
+            error(`Invalid protocol filter ("${item.value || item.placeholder}" is not a number)`);
+            return;
+        }
+        args.append('protocol', parseInt(item.value || item.placeholder));
+    }
     for (const item of document.getElementsByClassName('has-player-sample-filter')) args.append('hasPlayerSample', item.checked);
     for (const item of document.getElementsByClassName('online-player-filter')) args.append('onlinePlayer', item.value || item.placeholder);
     for (const item of document.getElementsByClassName('past-player-filter')) args.append('playerHistory', item.value || item.placeholder);
@@ -211,23 +294,43 @@ function updateFilter() {
         if (segments.filter((a, i) => i % 2 == 0 || !(i != segments.length - 1 || segments.length % 2 == 1)).join('').length > 0) args.append('descriptionVector', segments.join(''));
     }
     for (const item of document.getElementsByClassName('seen-after-filter')) args.append('seenAfter', Math.floor(new Date(item.value).getTime() / 1000));
-    // const seenAfterEnabled = document.getElementById('seenAfterEnabled').checked;
     for (const item of document.getElementsByClassName('ip-subnet-filter')) {
         let minIp = [];
         let maxIp = [];
         for (let range of (item.value || item.placeholder).split(',')) {
             let [ip, subnet] = range.trim().split('/');
+            if (ip.split('.').length != 4 || isNaN(parseInt(subnet))) {
+                error(`Invalid ip subnet filter ("${range}" is not a valid ip or subnet)`)
+                return;
+            }
             ip = ip.split('.').reverse().map((a, i) => parseInt(a) * 256**i).reduce((a, b) => a + b, 0);
-            if (subnet == null || subnet >= 32) args.append('ip', ip);
-            else {
+            if (subnet == null || subnet >= 32) {
+                if (isNaN(ip)) {
+                    error(`Invalid ip subnet filter ("${range.trim().split('/')[0]}" is not a valid ip)`)
+                    return;
+                }
+                args.append('ip', ip);
+            } else {
                 minIp.push((ip & ~((1 << (32 - subnet)) - 1)) >>> 0);
                 maxIp.push((ip | ((1 << (32 - subnet)) - 1)) >>> 0);
+                
+                if (isNaN(minIp) || isNaN(maxIp)) {
+                    error(`Invalid player count filter ("${range}" is not a valid ip or subnet)`)
+                    return;
+                }
             }
         }
-        args.append('minIp', JSON.stringify(minIp));
-        args.append('maxIp', JSON.stringify(maxIp));
+        
+        if (minIp.length > 0) args.append('minIp', JSON.stringify(minIp));
+        if (maxIp.length > 0) args.append('maxIp', JSON.stringify(maxIp));
     }
-    for (const item of document.getElementsByClassName('port-filter')) if (!isNaN(parseInt(item.value || item.placeholder))) args.append('port', parseInt(item.value || item.placeholder));
+    for (const item of document.getElementsByClassName('port-filter')) {
+        if (isNaN(parseInt(item.value || item.placeholder))) {
+            error(`Invalid port filter ("${item.value || item.placeholder}" is not a number)`);
+            return;
+        }
+        args.append('port', parseInt(item.value || item.placeholder));
+    }
     for (const item of document.getElementsByClassName('cracked-filter')) args.append('cracked', item.checked);
     for (const item of document.getElementsByClassName('whitelisted-filter')) args.append('whitelisted', item.checked);
 
@@ -401,11 +504,11 @@ function error(message, header = 'Error') {
                 error.classList.remove('alert');
                 break;
             }
-            case 'raise': {
+            case 'raise-alert': {
                 error.classList.remove('raise');
                 break;
             }
-            case 'remove': {
+            case 'remove-filter': {
                 error.remove();
                 break;
             }
@@ -416,7 +519,7 @@ function error(message, header = 'Error') {
 
 setInterval(() => {
     if (errorQueue.length == 0) return;
-    if (document.getElementsByClassName('alert').length > 0 || document.getElementsByClassName('raise').length > 0) return;
+    if (document.getElementsByClassName('error alert').length > 0 || document.getElementsByClassName('raise').length > 0) return;
     let error = errorQueue.splice(0, 1)[0];
     for (let element of errorContainer.children) element.classList.add('raise');
     errorContainer.appendChild(error);
