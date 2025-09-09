@@ -513,7 +513,7 @@ function error(message, header = 'Error') {
                 error.classList.remove('raise');
                 break;
             }
-            case 'remove-filter': {
+            case 'remove-alert': {
                 error.remove();
                 break;
             }
