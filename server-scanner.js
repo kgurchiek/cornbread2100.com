@@ -88,7 +88,12 @@ function createFilter(name, id, info, type, placeholder = '') {
 }
 
 function removeFilter(filter) {
-    for (let element of [searchButton, serverList, howItWorks].concat(Array.from(filterContainer.children).slice(Array.from(filterContainer.children).indexOf(filter) + 1))) element.classList.add('raise');
+    for (let element of [searchButton, serverList, howItWorks].concat(Array.from(filterContainer.children).slice(Array.from(filterContainer.children).indexOf(filter) + 1))) {
+        if (filterContainer.children.length == 2) element.style.setProperty('--raise-distance', '-104px');
+        else element.style.setProperty('--raise-distance', '-94px');
+        element.classList.add('raise');
+    }
+    filter.classList.remove('fade-in', 'lower');
     filter.classList.add('remove-filter');
 }
 

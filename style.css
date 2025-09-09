@@ -524,12 +524,16 @@ input[type="file"] {
     }
 
     to {
-        transform: translateY(-94px) scale(var(--scale, 1));
+        transform: translateY(var(--raise-distance, -104px)) scale(var(--scale, 1));
     }
 }
 
 .raise {
     animation: raise-filter 0.3s;
+}
+
+.filter.fade-in.raise {
+    animation: fade-in 1s, raise-filter 0.3s;
 }
 
 @keyframes remove-filter {
