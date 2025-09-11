@@ -356,7 +356,6 @@ let loading = false;
 let done = false;
 async function updateServers(preserve = false) {
     loading = true;
-    let data;
     if  (preserve) Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
     else {
         done = false;
@@ -364,21 +363,57 @@ async function updateServers(preserve = false) {
         serverList.scrollTo(0, 0);
     }
     let loadingSpinner = addLoadingSpinner();
-
+    
+    let response;
+    let data;
     try {
-        data = await (await fetch(`https://api.cornbread2100.com/servers?${args}`)).json();
+        response = await fetch(`https://api.cornbread2100.com/servers?${args}`);
+        data = await response.json();
     } catch (err) {
+        loadingSpinner.remove();
+        error('API request failed');
         console.error(err);
         Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
         return;
     }
+    loadingSpinner.remove();
 
+    switch(response.status) {
+        case 200: {
+            break;
+        }
+        case 429: {
+            let time = (60 * 60) - (Math.floor(Date.now() / 1000) % (60 * 60));
+            let minutes = Math.floor(time / 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+            let seconds = (time % 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+            let alert = error(`Rate limit reached, try again in ${minutes}:${seconds}`);
+            let int = setInterval(() => {
+                if (alert.classList.contains('remove')) return clearInterval(int);
+                let time = (60 * 60) - (Math.floor(Date.now() / 1000) % (60 * 60));
+                let minutes = Math.floor(time / 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+                let seconds = (time % 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+                alert.getElementsByClassName('message')[0].innerText = `Rate limit reached, try again in ${minutes}:${seconds}`;
+            }, 1000);
+            return;
+        }
+        case 500: {
+            error(`Error processing query`);
+            return;
+        }
+        case 504: {
+            error(`Query timeout`);
+            return;
+        }
+        default: {
+            error(`HTTP ${response.status}`);
+            return;
+        }
+    }
     if (data.error) {
         error(data.error);
         return;
     }
 
-    loadingSpinner.remove();
     for (const server of data) {
         const serverElement = document.createElement('div')
         serverElement.className = 'server';
@@ -431,7 +466,7 @@ async function updateServers(preserve = false) {
         
         const lastSeen = document.createElement('div');
         lastSeen.style = 'grid-area: 1 / 4 / 1 / 6; text-align: left;';
-        lastSeen.innerText = Math.floor(new Date().getTime() / 1000) - server.lastSeen < 86400 ? new Date(server.lastSeen * 1000).toLocaleTimeString() : new Date(server.lastSeen * 1000).toLocaleDateString();
+        lastSeen.innerText = `Last seen at ${Math.floor(new Date().getTime() / 1000) - server.lastSeen < 86400 ? new Date(server.lastSeen * 1000).toLocaleTimeString() : new Date(server.lastSeen * 1000).toLocaleDateString()}`;
         info.appendChild(lastSeen);
 
         const cracked = document.createElement('div');
@@ -501,7 +536,7 @@ function error(message, header = 'Error') {
             </button>
             <strong>${header}</strong>
             <br>
-            ${message}
+            <span class="message">${message}</span>
         `;
     error.addEventListener('animationend', (a) => {
         switch (a.animationName) {
@@ -520,6 +555,7 @@ function error(message, header = 'Error') {
         }
     });
     errorQueue.push(error);
+    return error;
 }
 
 setInterval(() => {

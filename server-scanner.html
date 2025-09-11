@@ -26,10 +26,19 @@
         </symbol>
     </svg>
 
+    <svg style="display: none;">
+        <symbol id="icon-magnifying-glass" viewBox="0 0 512 512">
+            <path class="st0" d="M376.324,312.508c49.638-78.774,40.238-184.326-28.306-252.871c-79.507-79.515-208.872-79.515-288.388,0
+            c-79.507,79.516-79.507,208.873,0,288.379c68.536,68.544,174.115,77.935,252.88,28.306l135.668,135.676L512,448.186
+            L376.324,312.508z M296.543,296.542c-51.121,51.139-134.308,51.139-185.439,0c-51.121-51.121-51.112-134.299,0.009-185.43
+            c51.122-51.121,134.309-51.13,185.43-0.008C347.665,162.243,347.665,245.421,296.543,296.542z"/>
+        </symbol>
+    </svg>
+
     <h1>Minecraft Server Scanner</h1>
     <div style="text-align: center; color: #c8c8c8; font-family: 'Helvetica';">
         <img src="https://raw.githubusercontent.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot/main/Icon.PNG"
-            alt="Minecraft Server Scanner Icon" width="100px" /><br>Scans the entire internet for active Minecraft servers<br><br>
+            alt="Minecraft Server Scanner Icon" width="100px" /><br><br>
         <div class="icon-container">
             <a href="https://github.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot" style="text-decoration: none; color:white; font-family: 'Helvetica';">
                 <img src="icons/github.png" width="40px" alt="Source Code" title="Source Code" /><br>Source Code
@@ -67,7 +76,12 @@
 
     <br>
 
-    <div onclick="updateFilter()" id="search-button" class="disable-select"><p style="margin: 0 auto">Search</p></div>
+    <div onclick="updateFilter()" id="search-button" class="disable-select">
+        <svg fill="currentColor">
+            <use href="#icon-magnifying-glass"></use>
+        </svg>
+        <!-- <p style="margin: 0 auto">Search!</p> -->
+    </div>
     
     <br>
 
