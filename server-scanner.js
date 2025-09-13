@@ -367,7 +367,7 @@ async function updateServers(preserve = false) {
     let response;
     let data;
     try {
-        response = await fetch(`https://api.cornbread2100.com/servers?${args}`);
+        response = await fetch(`https://api.cornbread2100.com/v1/servers?${args}`);
         data = await response.json();
     } catch (err) {
         loadingSpinner.remove();
@@ -414,7 +414,7 @@ async function updateServers(preserve = false) {
         return;
     }
 
-    for (const server of data) {
+    for (const server of data.data) {
         const serverElement = document.createElement('div')
         serverElement.className = 'server';
 
@@ -491,11 +491,15 @@ async function updateServers(preserve = false) {
             loadingSpinner.className = 'loading-spinner';
             playerList.appendChild(loadingSpinner);
 
-            fetch(`https://api.cornbread2100.com/playerHistory?ip=${server.ip}&port=${server.port}`)
+            fetch(`https://api.cornbread2100.com/v1/playerHistory?ip=${server.ip}&port=${server.port}`)
             .then(response => response.json())
             .then(data => {
+                if (data.error) {
+                    console.log(data);
+                    return;
+                }
                 Array.from(playerList.children).filter(a => a.className == 'loading-spinner').forEach(a => a.remove());
-                data = data.filter(a => a.lastSession == server.lastSeen)
+                data = data.data.filter(a => a.lastSession == server.lastSeen);
                 if (data.length == 0) {
                     playerList.remove();
                     return;
