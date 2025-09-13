@@ -511,7 +511,7 @@ async function updateServers(preserve = false) {
         serverList.appendChild(serverElement);
     }
 
-    if (data.length == limit) {
+    if (data.data.length == limit) {
         let loadingSpinner = document.createElement('div');
         loadingSpinner.className = 'loading-spinner';
         serverList.appendChild(loadingSpinner);
