@@ -720,7 +720,7 @@ div.server-list::-webkit-scrollbar-thumb {
     }
     
     20% {
-        transform: scale(0.7) translate(-40px, -5px);
+        transform: scale(0.7) translate(-50px, -5px);
     }
 
     40% {
@@ -871,4 +871,112 @@ div.playerlist::-webkit-scrollbar {
 
 div.playerlist::-webkit-scrollbar-thumb {
     display: none
+}
+
+#credits {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    height: 120px;
+    border: 2px solid #ffdd00;
+    border-radius: 1rem;
+    background-color: black;
+}
+
+#credits-remaining {
+    margin: 10px auto 0;
+    text-align: center;
+}
+
+#credits-bar {
+    width: 80%;
+    height: 10px;
+    margin: 10px auto 0;
+    border-radius: 5px;
+    background-color: #888888;
+}
+
+#credits-bar-fill {
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: #ffdd00;
+    position: relative;
+    overflow: hidden;
+    transition: width 0.5s;
+}
+
+#credits-bar-fill::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, #ffffff00, #ffffff99, #ffffff00);
+    animation: shine 2s infinite linear;
+    pointer-events: none;
+    border-radius: 5px;
+}
+
+@keyframes shine {
+    0% { left: -40%; }
+    100% { left: 100%; }
+}
+
+.credits-info {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    padding: 5px;
+    border: none;
+    color: #c8c8c8;
+    background-color: transparent;
+    transition: color 0.5s;
+}
+
+.credits-info:hover {
+    color: #08a4f1;
+}
+
+.credits-info svg {
+    width: 20px;
+    height: 20px;
+}
+
+.credits-info .info-text {
+    color: #c8c8c8;
+    visibility: hidden;
+    width: max-content;
+    max-width: 30vw;
+    background-color: black;
+    text-align: center;
+    border: 2px solid #08a4f1;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    bottom: 100%;
+    transform: translateX(-50%);
+    white-space: pre-wrap;
+    line-height: 1.2;
+    opacity: 0%;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.credits-info .info-text br {
+    display: block;
+    margin-top: 0.6em;
+    content: "";
+}
+
+.info-text a {
+    color: rgb(104, 217, 255);
+}
+
+.credits-info:hover .info-text {
+    visibility: visible;
+    opacity: 100%;
 }

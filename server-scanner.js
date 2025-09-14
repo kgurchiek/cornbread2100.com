@@ -1,4 +1,6 @@
 const limit = 20;
+let creditsRemaining = document.getElementById('credits-remaining');
+let creditsBar = document.getElementById('credits-bar-fill');
 let searchButton = document.getElementById('search-button');
 let serverList = document.getElementById('server-list');
 let howItWorks = document.getElementById('how-it-works');
@@ -352,6 +354,37 @@ function addLoadingSpinner() {
     return loadingSpinner
 }
 
+function statusErrors(status) {
+    switch(status) {
+        case 429: {
+            let time = (60 * 60) - (Math.floor(Date.now() / 1000) % (60 * 60));
+            let minutes = Math.floor(time / 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+            let seconds = (time % 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+            let alert = error(`Rate limit reached, try again in ${minutes}:${seconds}`);
+            let int = setInterval(() => {
+                if (alert.classList.contains('remove')) return clearInterval(int);
+                let time = (60 * 60) - (Math.floor(Date.now() / 1000) % (60 * 60));
+                let minutes = Math.floor(time / 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+                let seconds = (time % 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
+                alert.getElementsByClassName('message')[0].innerText = `Rate limit reached, try again in ${minutes}:${seconds}`;
+            }, 1000);
+            return;
+        }
+        case 500: {
+            error(`Error processing query`);
+            return;
+        }
+        case 504: {
+            error(`Query timeout`);
+            return;
+        }
+        default: {
+            error(`HTTP ${status}`);
+            return;
+        }
+    }
+}
+
 let loading = false;
 let done = false;
 async function updateServers(preserve = false) {
@@ -378,37 +411,11 @@ async function updateServers(preserve = false) {
     }
     loadingSpinner.remove();
 
-    switch(response.status) {
-        case 200: {
-            break;
-        }
-        case 429: {
-            let time = (60 * 60) - (Math.floor(Date.now() / 1000) % (60 * 60));
-            let minutes = Math.floor(time / 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
-            let seconds = (time % 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
-            let alert = error(`Rate limit reached, try again in ${minutes}:${seconds}`);
-            let int = setInterval(() => {
-                if (alert.classList.contains('remove')) return clearInterval(int);
-                let time = (60 * 60) - (Math.floor(Date.now() / 1000) % (60 * 60));
-                let minutes = Math.floor(time / 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
-                let seconds = (time % 60).toLocaleString('en-US', { minimumIntegerDigits: 2 });
-                alert.getElementsByClassName('message')[0].innerText = `Rate limit reached, try again in ${minutes}:${seconds}`;
-            }, 1000);
-            return;
-        }
-        case 500: {
-            error(`Error processing query`);
-            return;
-        }
-        case 504: {
-            error(`Query timeout`);
-            return;
-        }
-        default: {
-            error(`HTTP ${response.status}`);
-            return;
-        }
+    if (response.status != 200) {
+        statusErrors(response.status);
+        return;
     }
+    
     if (data.error) {
         error(data.error);
         return;
@@ -520,12 +527,32 @@ async function updateServers(preserve = false) {
     loading = false;
 }
 
-let args = new URLSearchParams();
-args.set('sort', 'lastSeen');
-args.set('descending', true);
-args.set('limit', limit);
-args.set('skip', 0);
-updateServers();
+function updateCredits(credits, max) {
+    creditsRemaining.innerText = `${credits.toLocaleString()}/${max.toLocaleString()}`;
+    creditsBar.style.width = `${(credits / max) * 100}%`;
+}
+
+let args;
+(async () => {
+    let response = await fetch('https://api.cornbread2100.com/v1/credits');
+    if (response.status != 200) {
+        statusErrors(response.status);
+        return;
+    }
+    let data = await response.json();
+    if (data.error) {
+        error(data.error);
+        return;
+    }
+    updateCredits(data.credits, data.max);
+
+    args = new URLSearchParams();
+    args.set('sort', 'lastSeen');
+    args.set('descending', true);
+    args.set('limit', limit);
+    args.set('skip', 0);
+    updateServers();
+})();
 
 let errorContainer = document.getElementById('error-container');
 let errorQueue = [];
