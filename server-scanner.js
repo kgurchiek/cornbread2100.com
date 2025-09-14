@@ -415,11 +415,12 @@ async function updateServers(preserve = false) {
         statusErrors(response.status);
         return;
     }
-    
     if (data.error) {
         error(data.error);
         return;
     }
+
+    updateCredits(data.credits);
 
     for (const server of data.data) {
         const serverElement = document.createElement('div')
@@ -486,7 +487,7 @@ async function updateServers(preserve = false) {
         playerCount.innerText = `${server.players.online} / ${server.players.max}`;
         info.appendChild(playerCount);
 
-        if (server.players.hasPlayerSample) {
+        if (server.players.online > 0 && server.players.hasPlayerSample) {
             const playerList = document.createElement('div');
             playerList.className = 'playerlist';
             info.appendChild(playerList);
@@ -505,6 +506,7 @@ async function updateServers(preserve = false) {
                     console.log(data);
                     return;
                 }
+                updateCredits(data.credits);
                 Array.from(playerList.children).filter(a => a.className == 'loading-spinner').forEach(a => a.remove());
                 data = data.data.filter(a => a.lastSession == server.lastSeen);
                 if (data.length == 0) {
@@ -527,9 +529,10 @@ async function updateServers(preserve = false) {
     loading = false;
 }
 
-function updateCredits(credits, max) {
-    creditsRemaining.innerText = `${credits.toLocaleString()}/${max.toLocaleString()}`;
-    creditsBar.style.width = `${(credits / max) * 100}%`;
+let maxCredits;
+function updateCredits(credits) {
+    creditsRemaining.innerText = `${credits.toLocaleString()}/${maxCredits.toLocaleString()}`;
+    creditsBar.style.width = `${(credits / maxCredits) * 100}%`;
 }
 
 let args;
@@ -544,7 +547,8 @@ let args;
         error(data.error);
         return;
     }
-    updateCredits(data.credits, data.max);
+    maxCredits = data.max;
+    updateCredits(data.credits);
 
     args = new URLSearchParams();
     args.set('sort', 'lastSeen');
