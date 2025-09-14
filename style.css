@@ -874,7 +874,7 @@ div.playerlist::-webkit-scrollbar-thumb {
 }
 
 #credits {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
     width: 300px;
