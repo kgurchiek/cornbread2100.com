@@ -239,19 +239,21 @@ function updateFilter() {
             maxPlayers = max;
         } else minPlayers = maxPlayers = playerCount;
         
-        if (isNaN(minPlayers)) {
+        if (minPlayers != null && isNaN(minPlayers)) {
             error(`Invalid player count filter ("${minPlayers}" is not a number)`);
             return;
         }
-        if (isNaN(maxPlayers)) {
+        if (maxPlayers != null && isNaN(maxPlayers)) {
             error(`Invalid player count filter ("${maxPlayers}" is not a number)`);
             return;
         }
 
         if (minPlayers != null) minPlayers = parseInt(minPlayers);
         if (maxPlayers != null) maxPlayers = parseInt(maxPlayers);
-        if (playerCount.startsWith('>')) minPlayers++;
-        if (playerCount.startsWith('<')) maxPlayers--;
+        if (playerCount[1] != '=') {
+            if (playerCount.startsWith('>')) minPlayers++;
+            if (playerCount.startsWith('<')) maxPlayers--;
+        }
 
         if (minPlayers == maxPlayers) args.append('playerCount', minPlayers);
         else {
@@ -322,7 +324,7 @@ function updateFilter() {
                 maxIp.push((ip | ((1 << (32 - subnet)) - 1)) >>> 0);
                 
                 if (isNaN(minIp) || isNaN(maxIp)) {
-                    error(`Invalid player count filter ("${range}" is not a valid ip or subnet)`)
+                    error(`Invalid ip subnet filter ("${range}" is not a valid ip or subnet)`)
                     return;
                 }
             }
