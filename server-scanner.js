@@ -380,8 +380,8 @@ function statusErrors(status) {
             error(`Query timeout`);
             return;
         }
-        case 504: {
-            error(`API timeout`);
+        case 524: {
+            error(`API connection error`);
             return;
         }
         default: {
