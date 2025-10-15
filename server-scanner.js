@@ -376,7 +376,7 @@ function statusErrors(status) {
             error(`Error processing query`);
             return;
         }
-        case 504: {
+        case 503: {
             error(`Query timeout`);
             return;
         }
