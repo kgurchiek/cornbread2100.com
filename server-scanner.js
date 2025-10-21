@@ -151,7 +151,7 @@ function addFilter(type) {
             break;
         }
         case 'IP Subnet': {
-            element = createFilter(type, 'ip-subnet-filter', 'Searches for servers whose IPv4 addresses are within the given subnet', 'text', '1.2.3.4, 1.0.0.0/8');
+            element = createFilter(type, 'ip-subnet-filter', 'Searches for servers whose IPv4 addresses are within the given subnet', 'text', '1.2.3.4, 1.0.0.0/8, !2.3.4.0/24');
             break;
         }
         case 'Port': {
@@ -307,25 +307,31 @@ function updateFilter() {
         let minIp = [];
         let maxIp = [];
         for (let range of (item.value || item.placeholder).split(',')) {
-            let [ip, subnet] = range.trim().split('/');
+            range = range.trim();
+            let inverted = range.startsWith('!');
+            if (inverted) range = range.slice(1);
+            let [ip, subnet] = range.split('/');
+            if (subnet == null) subnet = 32;
             if (ip.split('.').length != 4 || isNaN(parseInt(subnet))) {
                 error(`Invalid ip subnet filter ("${range}" is not a valid ip or subnet)`)
                 return;
             }
             ip = ip.split('.').reverse().map((a, i) => parseInt(a) * 256**i).reduce((a, b) => a + b, 0);
-            if (subnet == null || subnet >= 32) {
-                if (isNaN(ip)) {
-                    error(`Invalid ip subnet filter ("${range.trim().split('/')[0]}" is not a valid ip)`)
-                    return;
-                }
-                args.append('ip', ip);
+            if (inverted) {
+                let excludeMinIp = (ip & ~((1 << (32 - subnet)) - 1)) >>> 0;
+                let excludeMaxIp = (ip | ((1 << (32 - subnet)) - 1)) >>> 0;
+                args.append('minIp', JSON.stringify([excludeMaxIp <= 0 ? null : 0, excludeMaxIp >= 4294967295 ? null : excludeMaxIp + 1].filter(a => a != null)));
+                args.append('maxIp', JSON.stringify([excludeMaxIp <= 0 ? null : excludeMinIp - 1].filter(a => a != null)));
             } else {
-                minIp.push((ip & ~((1 << (32 - subnet)) - 1)) >>> 0);
-                maxIp.push((ip | ((1 << (32 - subnet)) - 1)) >>> 0);
-                
-                if (isNaN(minIp) || isNaN(maxIp)) {
-                    error(`Invalid ip subnet filter ("${range}" is not a valid ip or subnet)`)
-                    return;
+                if (subnet >= 32) {
+                    if (isNaN(ip)) {
+                        error(`Invalid ip subnet filter ("${range.trim().split('/')[0]}" is not a valid ip)`)
+                        return;
+                    }
+                    args.append('ip', ip);
+                } else {
+                    minIp.push((ip & ~((1 << (32 - subnet)) - 1)) >>> 0);
+                    maxIp.push((ip | ((1 << (32 - subnet)) - 1)) >>> 0);
                 }
             }
         }
