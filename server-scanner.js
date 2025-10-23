@@ -457,7 +457,7 @@ async function updateServers(preserve = false) {
         content.appendChild(info);
 
         const motd = document.createElement('div');
-        motd.style = 'grid-area: 1 / 4 / 3 / 1; text-align: left; overflow: auto;';
+        motd.style = 'grid-area: 1 / 4 / 2 / 1; text-align: left; overflow: auto;';
         if (server.description == null) motd.innerText = '​'; // zero width space
         else if (server.description.extra != null && server.description.extra.length > 0) {
             if (server.description.extra[0].extra == null) {
@@ -490,8 +490,8 @@ async function updateServers(preserve = false) {
         info.appendChild(lastSeen);
 
         const cracked = document.createElement('div');
-        cracked.style = 'grid-area: 2 / 4 / 2 / 6; text-align: left;';
-        cracked.innerText = `🔒 ${server.cracked == null ? 'Unknown' : server.cracked ? 'Cracked' : 'Premium'}`;
+        cracked.style = 'grid-area: 3 / 3 / 3 / 3; text-align: left;';
+        cracked.innerText = `${server.cracked == null ? '🔒 Auth Unknown' : server.cracked ? '🔓 Cracked' : '🔒 Premium'}`;
         info.appendChild(cracked);
 
         const playerCount = document.createElement('div');
@@ -499,17 +499,42 @@ async function updateServers(preserve = false) {
         playerCount.innerText = `${server.players.online} / ${server.players.max}`;
         info.appendChild(playerCount);
 
-        if (server.players.online > 0 && server.players.hasPlayerSample) {
+        if (server.players.hasPlayerSample) {
             const playerList = document.createElement('div');
-            playerList.className = 'playerlist';
+            playerList.className = 'player-list';
             info.appendChild(playerList);
-            
+
+            playerList.innerHTML = `
+                <div class="player-list-tabs disable-select">
+                    <button class="player-list-tab active">Online Players</button>
+                    <button class="player-list-tab">Past Players</button>
+                </div>
+            `
             const playerListText = document.createElement('div');
-            playerListText.style = 'margin: 5px 10px; overflow-x: scroll; white-space: nowrap; line-height: 1.6; height: 100%; width: 100%;';
+            playerListText.className = 'player-list-text';
+            
             playerList.appendChild(playerListText);
             let loadingSpinner = document.createElement('div');
             loadingSpinner.className = 'loading-spinner';
             playerList.appendChild(loadingSpinner);
+            
+            let playerHistory;
+            playerList.children[0].children[0].onclick = (click) => {
+                let tab = click.target;
+                playerListText.innerHTML = '';
+                selectTab(tab);
+                if (playerHistory == null) return;
+                playerListText
+                for (const player of playerHistory.data.filter(a => a.lastSession == server.lastSeen)) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
+            }
+            
+            playerList.children[0].children[1].onclick = (click) => {
+                let tab = click.target;
+                playerListText.innerHTML = '';
+                selectTab(tab);
+                if (playerHistory == null) return;
+                for (const player of playerHistory.data) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
+            }
 
             fetch(`https://api.cornbread2100.com/v1/playerHistory?ip=${server.ip}&port=${server.port}`)
             .then(response => response.json())
@@ -520,12 +545,8 @@ async function updateServers(preserve = false) {
                 }
                 updateCredits(data.credits);
                 Array.from(playerList.children).filter(a => a.className == 'loading-spinner').forEach(a => a.remove());
-                data = data.data.filter(a => a.lastSession == server.lastSeen);
-                if (data.length == 0) {
-                    playerList.remove();
-                    return;
-                }
-                for (const player of data) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
+                playerHistory = data;
+                for (const player of playerHistory.data.filter(a => a.lastSession == server.lastSeen)) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
             })
         }
 
@@ -613,3 +634,9 @@ setInterval(() => {
     errorContainer.appendChild(error);
     setTimeout(() => error.classList.add('remove'), 10000);
 });
+
+function selectTab(tab) {
+    let tabs = Array.from(tab.parentElement.children).filter(a => a.nodeName == 'BUTTON');
+    for (let tab of tabs) tab.classList.remove('active');
+    tab.classList.add('active');
+}

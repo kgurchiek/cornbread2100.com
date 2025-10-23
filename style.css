@@ -696,10 +696,8 @@ div.server-list::-webkit-scrollbar-thumb {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color:
-    #ffdd00;
-    color:
-    #000;
+    background-color: #ffdd00;
+    color: #000;
     border-radius: 3px;
     margin: 0 auto;
     transition: transform 0.5s;
@@ -773,16 +771,56 @@ div.server-list::-webkit-scrollbar-thumb {
     height: fit-content;
 }
 
-.playerlist {
-    overflow: scroll;
+.player-list {
+    box-sizing: border-box;
+    overflow: hidden;
     width: 250%;
     grid-column: 4 / 5;
     grid-row: 2 / 5;
-    background-color: #000;
+    background-color: black;
     border-radius: 1rem;
     text-align: left;
     font-family: mojangles;
-    overflow: auto;
+}
+
+.player-list-text {
+    padding: 0px 10px;
+    overflow-x: auto;
+    overflow-y: visible;
+    white-space: nowrap;
+    line-height: 1.6;
+    height: auto;
+    width: 100%;
+}
+
+.player-list-tabs {
+    position: relative;
+    top: 0;
+    width: 90%;
+    display: flex;
+    margin: auto;
+}
+
+.player-list-tab {
+    width: 50%;
+    padding: 5px 0px;
+    background: none;
+	color: inherit;
+	border: none;
+    font-family: 'Helvetica';
+    font-size: 15px;
+	cursor: pointer;
+	outline: inherit;
+    border-bottom: 2px solid black;
+    transition: border 0.5s;
+}
+
+.player-list-tab:hover {
+    border-bottom: 2px solid #aaaaaa;
+}
+
+.player-list-tab.active {
+    border-bottom: 2px solid white;
 }
 
 #error-container {
