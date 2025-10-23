@@ -807,7 +807,7 @@ div.server-list::-webkit-scrollbar-thumb {
     background: none;
 	color: inherit;
 	border: none;
-    font-family: 'Helvetica';
+    font-family: inherit;
     font-size: 15px;
 	cursor: pointer;
 	outline: inherit;
