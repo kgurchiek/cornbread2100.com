@@ -11,9 +11,9 @@ serverList.addEventListener('wheel', async (e) => {
             updateServers(true);
         }
         serverList.scrollTo(0, serverList.scrollTop + serverList.clientHeight);
-        e.preventDefault();
+        // e.preventDefault();
     }
-    if (e.deltaY < 0 && serverList.scrollTop == 0) e.preventDefault();
+    // if (e.deltaY < 0 && serverList.scrollTop == 0) e.preventDefault();
 });
 
 let dropdown = document.getElementById('filter-dropdown');
@@ -546,7 +546,8 @@ async function updateServers(preserve = false) {
                 updateCredits(data.credits);
                 Array.from(playerList.children).filter(a => a.className == 'loading-spinner').forEach(a => a.remove());
                 playerHistory = data;
-                for (const player of playerHistory.data.filter(a => a.lastSession == server.lastSeen)) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
+                if (playerHistory.data.length == 0) playerList.remove();
+                else for (const player of playerHistory.data.filter(a => a.lastSession == server.lastSeen)) playerListText.innerHTML += `${playerListText.innerHTML.length > 0 ? '<br>' : ''}${sanitize(player.name)}&nbsp;&nbsp;${sanitize(player.id)}`;
             })
         }
 

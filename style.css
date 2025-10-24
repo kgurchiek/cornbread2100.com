@@ -781,16 +781,16 @@ div.server-list::-webkit-scrollbar-thumb {
     border-radius: 1rem;
     text-align: left;
     font-family: mojangles;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 .player-list-text {
     padding: 0px 10px;
-    overflow-x: auto;
-    overflow-y: visible;
     white-space: nowrap;
     line-height: 1.6;
     height: auto;
-    width: 100%;
+    width: 90%;
 }
 
 .player-list-tabs {
