@@ -19,54 +19,42 @@
     <br><br>
     <video id="outputVideo" controls></video>
 
-    <div style="display: flex; width: 30%; margin: 0 auto; justify-content: center;">
-        <div>
-            <div id="set-preset" class="dropdown-container disable-select" style="margin: 10px;">
-                <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
-                    <div style="display: flex; align-items: center;">
-                        <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Preset: Ultra Fast</div>
-                        <svg class="flip" fill="currentColor" width="20px" height="20px">
-                            <use href="#icon-dropdown"></use>
-                        </svg>
-                    </div>
-                </div>
-                <div class="dropdown-content fade-bottom">
-                    <a onclick="setPreset('ultrafast', 'Ultra Fast')">Ultra Fast</a>
-                    <a onclick="setPreset('superfast', 'Super Fast')">Super Fast</a>
-                    <a onclick="setPreset('veryfast', 'Very Fast')">Very Fast</a>
-                    <a onclick="setPreset('faster', 'Faster')">Faster</a>
-                    <a onclick="setPreset('fast', 'Fast')">Fast</a>
-                    <a onclick="setPreset('medium', 'Medium')">Medium</a>
-                    <a onclick="setPreset('slow', 'Slow')">Slow</a>
-                    <a onclick="setPreset('slower', 'Slower')">Slower</a>
-                    <a onclick="setPreset('veryslow', 'Very Slow')">Very Slow</a>
-                    <a onclick="setPreset('placebo', 'Placebo')">Placebo</a>
+    <div style="  display: grid; grid-template-columns: 1fr 1fr; align-items: start;">
+        <div id="set-preset" class="dropdown-container disable-select" style="margin: 10px; justify-self: end;">
+            <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
+                <div style="display: flex; align-items: center;">
+                    <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Preset: Ultra Fast</div>
+                    <svg class="flip" fill="currentColor" width="20px" height="20px">
+                        <use href="#icon-dropdown"></use>
+                    </svg>
                 </div>
             </div>
+            <div class="dropdown-content fade-bottom">
+                <a onclick="setPreset('ultrafast', 'Ultra Fast')">Ultra Fast</a>
+                <a onclick="setPreset('superfast', 'Super Fast')">Super Fast</a>
+                <a onclick="setPreset('veryfast', 'Very Fast')">Very Fast</a>
+                <a onclick="setPreset('faster', 'Faster')">Faster</a>
+                <a onclick="setPreset('fast', 'Fast')">Fast</a>
+                <a onclick="setPreset('medium', 'Medium')">Medium</a>
+                <a onclick="setPreset('slow', 'Slow')">Slow</a>
+                <a onclick="setPreset('slower', 'Slower')">Slower</a>
+                <a onclick="setPreset('veryslow', 'Very Slow')">Very Slow</a>
+                <a onclick="setPreset('placebo', 'Placebo')">Placebo</a>
+            </div>
         </div>
-    
-        <div>
-            <div id="set-resolution" class="dropdown-container disable-select" style="margin: 10px">
-                <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
-                    <div style="display: flex; align-items: center;">   
-                        <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Resolution: 1080x1920</div>
-                        <svg class="flip" fill="currentColor" width="20px" height="20px">
-                            <use href="#icon-dropdown"></use>
-                        </svg>
-                    </div>
+        <div id="set-resolution" class="dropdown-container disable-select" style="margin: 10px; justify-self: start;">
+            <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
+                <div style="display: flex; align-items: center;">   
+                    <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Resolution: 1920x1080</div>
+                    <svg class="flip" fill="currentColor" width="20px" height="20px">
+                        <use href="#icon-dropdown"></use>
+                    </svg>
                 </div>
-                <div class="dropdown-content fade-bottom">
-                    <a onclick="setPreset('ultrafast', 'Ultra Fast')">Ultra Fast</a>
-                    <a onclick="setPreset('superfast', 'Super Fast')">Super Fast</a>
-                    <a onclick="setPreset('veryfast', 'Very Fast')">Very Fast</a>
-                    <a onclick="setPreset('faster', 'Faster')">Faster</a>
-                    <a onclick="setPreset('fast', 'Fast')">Fast</a>
-                    <a onclick="setPreset('medium', 'Medium')">Medium</a>
-                    <a onclick="setPreset('slow', 'Slow')">Slow</a>
-                    <a onclick="setPreset('slower', 'Slower')">Slower</a>
-                    <a onclick="setPreset('veryslow', 'Very Slow')">Very Slow</a>
-                    <a onclick="setPreset('placebo', 'Placebo')">Placebo</a>
-                </div>
+            </div>
+            <div class="dropdown-content">
+                <a onclick="setResolution('1920x1080', '1920x1080')">1920x1080</a>
+                <a onclick="setResolution('1280x720', '1280x720')">1280x720</a>
+                <a onclick="setResolution('640x480', '640x480')">640x480</a>
             </div>
         </div>
     </div>

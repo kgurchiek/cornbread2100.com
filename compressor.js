@@ -52,6 +52,12 @@ window.setPreset = (p, text) => {
     document.getElementById('set-preset').getElementsByClassName('dropdown-text')[0].innerText = `Preset: ${text}`;
 }
 
+let resolution = '1920x1080';
+window.setResolution = (r, text) => {
+    resolution = r;
+    document.getElementById('set-resolution').getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${text}`;
+}
+
 async function getFormat(input) {
     await ffmpeg.ffprobe([
         '-show_format',
