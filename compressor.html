@@ -14,12 +14,12 @@
     </svg>
 
     <h1>Local Video Compressor</h1>
-    <input type="file" id="fileInput" />
+    <input type="file" id="fileInput"/>
     <button id="compressButton">Compress</button>
     <br><br>
     <video id="outputVideo" controls></video>
 
-    <div style="  display: grid; grid-template-columns: 1fr 1fr; align-items: start;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: start;">
         <div id="set-preset" class="dropdown-container disable-select" style="margin: 10px; justify-self: end;">
             <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
                 <div style="display: flex; align-items: center;">
@@ -55,6 +55,29 @@
                 <a onclick="setResolution('1920x1080', '1920x1080')">1920x1080</a>
                 <a onclick="setResolution('1280x720', '1280x720')">1280x720</a>
                 <a onclick="setResolution('640x480', '640x480')">640x480</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="size-options" style="width: 30%; margin: 0 auto;">
+        <div class="option-tab-container">
+            <div id="percentage-tab" onclick="setSizeMode('percentage')" class="option-tab disable-select selected-tab" style="padding: 5px 10px;">Percentage</div>
+            <div id="size-tab" onclick="setSizeMode('size')" class="option-tab disable-select" style="padding: 5px 10px;">Size</div>
+        </div>
+        <div id="percentage-content" class="option-box" style="border-top-left-radius: 0; display: grid; grid-template-columns: 9fr 1fr;">
+            <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
+            <input id="percentage-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
+            <div style="display: flex; margin-right: 15px;">
+                <input id="percentage-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px;">
+                <span style="align-content: center;">%</span>
+            </div>
+        </div>
+        <div id="size-content" class="option-box" style="border-top-left-radius: 0; display: none; grid-template-columns: 9fr 1fr;">
+            <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
+            <input id="size-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
+            <div style="display: flex; margin-right: 15px;">
+                <input id="size-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px;">
+                <span style="align-content: center;">MB</span>
             </div>
         </div>
     </div>

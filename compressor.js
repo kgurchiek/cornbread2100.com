@@ -58,6 +58,47 @@ window.setResolution = (r, text) => {
     document.getElementById('set-resolution').getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${text}`;
 }
 
+let sizeTabs = [
+    document.getElementById('percentage-tab'),
+    document.getElementById('size-tab')
+];
+let sizeContents = [
+    document.getElementById('percentage-content'),
+    document.getElementById('size-content')
+];
+window.setSizeMode = (type) => {
+    sizeTabs.forEach(a => a.classList.remove('selected-tab'));
+    sizeContents.forEach(a => a.style.display = 'none');
+    switch (type) {
+        case 'percentage': {
+            sizeTabs[0].classList.add('selected-tab');
+            sizeContents[0].style.display = 'grid';
+            break;
+        }
+        case 'size': {
+            sizeTabs[1].classList.add('selected-tab');
+            sizeContents[1].style.display = 'grid';
+            break;
+        }
+    }
+}
+
+let percentageText = document.getElementById('percentage-text');
+let percentageSlider = document.getElementById('percentage-slider');
+const updatePercentageText = () => percentageText.value = percentageSlider.value;
+updatePercentageText();
+const updatePercentageSlider = () => percentageSlider.value = percentageText.value;
+percentageSlider.addEventListener('input', updatePercentageText);
+percentageText.addEventListener('input', updatePercentageSlider);
+
+let sizeText = document.getElementById('size-text');
+let sizeSlider = document.getElementById('size-slider');
+const updateSizeText = () => sizeText.value = sizeSlider.value;
+updateSizeText();
+const updateSizeSlider = () => sizeSlider.value = sizeText.value;
+sizeSlider.addEventListener('input', updateSizeText);
+sizeText.addEventListener('input', updateSizeSlider);
+
 async function getFormat(input) {
     await ffmpeg.ffprobe([
         '-show_format',

@@ -13,9 +13,7 @@
 html {
     height: 100%;
     width: 100%;
-    background-color: #000;
-    /* display: flex;
-    justify-content: center; */
+    background-color: black;
     color: #c8c8c8;
     font-family: 'Helvetica';
 }
@@ -68,7 +66,7 @@ input[type="checkbox"] {
     border-left: 0px;
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
-    color: #000;
+    color: black;
     background-color: #ffdd00;
     text-align: center;
     text-decoration: none;
@@ -385,7 +383,7 @@ iframe::-webkit-scrollbar-corner {
 
 .filter {
     position: relative;
-    margin: 10px auto 10px auto;
+    margin: 10px auto;
     text-align: center;
     border-radius: 1rem;
     border: 2px solid #ffdd00;
@@ -567,7 +565,7 @@ iframe::-webkit-scrollbar-corner {
     outline: none;
     border: 2px solid transparent;
     border-radius: 1rem;
-    background-color: #000;
+    background-color: black;
     color: #c8c8c8;
     box-shadow: 0 0 8px 0 #ffffff66;
     transition: border 0.3s, box-shadow 0.3s;
@@ -592,7 +590,7 @@ iframe::-webkit-scrollbar-corner {
     outline: none;
     border: 2px solid transparent;
     border-radius: 1rem;
-    background-color: #000;
+    background-color: black;
     color: #c8c8c8;
     color-scheme: dark;
     box-shadow: 0 0 8px 0 #ffffff66;
@@ -702,7 +700,7 @@ div.server-list::-webkit-scrollbar-thumb {
     justify-content: center;
     align-items: center;
     background-color: #ffdd00;
-    color: #000;
+    color: black;
     border-radius: 3px;
     margin: 0 auto;
     transition: transform 0.5s;
@@ -1022,4 +1020,112 @@ div.playerlist::-webkit-scrollbar-thumb {
 .credits-info:hover .info-text {
     visibility: visible;
     opacity: 100%;
+}
+
+.option-box {
+    position: relative;
+    text-align: center;
+    border-radius: 1rem;
+    border: 2px solid #ffdd00;
+}
+
+.option-tab-container {
+    display: flex;
+}
+
+.option-tab {
+    border: 2px solid #ffdd00;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom: none;
+}
+
+.option-tab:hover {
+    background-color: #ffdd00;
+    color: black;
+}
+
+.option-tab.selected-tab {
+    background-color: #ffdd00;
+    color: black;
+}
+
+.slider {
+    -webkit-appearance: none;
+    height: 5px;
+    border-radius: 5px;  
+    background: #c8c8c8;
+    outline: none;
+    opacity: 0.8;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid #ffdd00;
+    background: black;
+    cursor: pointer;
+    transition: width .2s, height .2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    width: 20px;
+    height: 20px;
+}
+
+.slider::-webkit-slider-thumb:active {
+    width: 20px;
+    height: 20px;
+}
+
+.slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid #ffdd00;
+    background: black;
+    cursor: pointer;
+    transition: width .2s, height .2s;
+}
+
+.slider::-moz-range-thumb:hover {
+    width: 20px;
+    height: 20px;
+}
+
+.slider::-moz-range-thumb:active {
+    width: 20px;
+    height: 20px;
+}
+
+input[type="text"].small-text {
+    margin: 10px;
+    background: black;
+    color: #c8c8c8;
+    border: 2px solid #c8c8c8;
+    border-radius: 5px;
+    opacity: 0.8;
+    box-shadow: 0 0 0 0 #c8c8c8;
+    transition: opacity 0.3s, border-color 0.3s, box-shadow 0.3s;
+    min-width: 0;
+}
+
+input[type="text"].small-text:hover {
+    box-shadow: 0 0 8px 0 #c8c8c8;
+    opacity: 1;
+}
+
+input[type="text"].small-text:focus {
+    outline: none;
+    border: 2px solid #ffdd00;
+    box-shadow: 0 0 8px 0 #ffdd00ff;
 }
