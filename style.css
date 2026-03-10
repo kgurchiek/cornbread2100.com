@@ -1116,7 +1116,6 @@ input[type="text"].small-text {
     opacity: 0.8;
     box-shadow: 0 0 0 0 #c8c8c8;
     transition: opacity 0.3s, border-color 0.3s, box-shadow 0.3s;
-    min-width: 0;
 }
 
 input[type="text"].small-text:hover {
@@ -1128,4 +1127,21 @@ input[type="text"].small-text:focus {
     outline: none;
     border: 2px solid #ffdd00;
     box-shadow: 0 0 8px 0 #ffdd00ff;
+}
+
+#compress-button {
+    width: 120px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffdd00;
+    color: black;
+    border-radius: 3px;
+    margin: 20px auto;
+    transition: transform 0.5s;
+}
+
+#compress-button:hover {
+    transform: scale(1.1);
 }

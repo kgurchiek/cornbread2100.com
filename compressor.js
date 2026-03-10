@@ -2,8 +2,8 @@ import { FFmpeg } from './ffmpeg/ffmpeg/dist/esm/index.js';
 import { fetchFile, toBlobURL } from './ffmpeg/util/dist/esm/index.js';
 const ffmpeg = new FFmpeg();
 
-const fileInput = document.getElementById('fileInput');
-const compressButton = document.getElementById('compressButton');
+const uploadInput = document.getElementById('upload');
+const compressButton = document.getElementById('compress-button');
 const outputVideo = document.getElementById('outputVideo');
 
 window.toggleDropdown = (element, set) => {
@@ -118,13 +118,13 @@ async function getFormat(input) {
 }
 
 // let format;
-// fileInput.addEventListener('change', async () => {
+// uploadInput.addEventListener('change', async () => {
 //     format = null;
-//     format = await ffprobe.getFileInfo(fileInput.files[0]);
+//     format = await ffprobe.getFileInfo(uploadInput.files[0]);
 // })
 
 compressButton.onclick = async () => {
-    const file = fileInput.files[0];
+    const file = uploadInput.files[0];
     if (!file) return alert('Select a file first');
 
     compressButton.disabled = true;
