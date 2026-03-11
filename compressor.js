@@ -2,9 +2,69 @@ import { FFmpeg } from './ffmpeg/ffmpeg/dist/esm/index.js';
 import { fetchFile, toBlobURL } from './ffmpeg/util/dist/esm/index.js';
 const ffmpeg = new FFmpeg();
 
+const uploadLabel = document.getElementById('upload-label');
 const uploadInput = document.getElementById('upload');
 const compressButton = document.getElementById('compress-button');
-const outputVideo = document.getElementById('outputVideo');
+const outputVideo = document.getElementById('output-video');
+
+window.addEventListener('drop', (e) => {
+    if ([...e.dataTransfer.items].some((item) => item.kind == 'file')) e.preventDefault();
+});
+
+window.addEventListener('dragover', (e) => {
+    if ([...e.dataTransfer.items].some((item) => item.kind == 'file')) {
+        e.preventDefault();
+        if (!uploadLabel.contains(e.target)) e.dataTransfer.dropEffect = 'none';
+    }
+});
+
+let format;
+async function processFile(file) {
+    uploadLabel.children[1].innerHTML = `Uploaded: ${file.name}`;
+    uploadLabel.classList.add('uploaded');
+
+    if (!ffmpeg.loaded) {
+        compressButton.textContent = 'Loading FFmpeg...';
+        
+        const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm';
+        await ffmpeg.load({
+            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+            workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
+        });
+    }
+
+    await ffmpeg.writeFile('input', await fetchFile(file));
+    format = await getFormat('input');
+    console.log(format);
+}
+
+uploadLabel.addEventListener('drop', (e) => {
+    if ([...e.dataTransfer.items].some((item) => item.kind != 'file')) return;
+    e.preventDefault();
+    uploadLabel.classList.remove('drag');
+    console.log(e.dataTransfer);
+    processFile(e.dataTransfer.files[0]);
+});
+
+uploadInput.addEventListener('change', () => {
+    if (uploadInput.files.length == 0) return;
+    processFile(uploadInput.files[0]);
+});
+
+uploadLabel.addEventListener('dragover', (e) => {
+    if ([...e.dataTransfer.items].some((item) => item.kind == 'file')) e.dataTransfer.dropEffect = 'copy';
+});
+
+uploadLabel.addEventListener('dragenter', (e) => {
+    if (e.target !== uploadLabel) return;
+    uploadLabel.classList.add('drag');
+});
+
+uploadLabel.addEventListener('dragleave', (e) => {
+    if (e.target !== uploadLabel) return;
+    uploadLabel.classList.remove('drag');
+});
 
 window.toggleDropdown = (element, set) => {
     if (set == null) {
@@ -117,12 +177,6 @@ async function getFormat(input) {
     return data;
 }
 
-// let format;
-// uploadInput.addEventListener('change', async () => {
-//     format = null;
-//     format = await ffprobe.getFileInfo(uploadInput.files[0]);
-// })
-
 compressButton.onclick = async () => {
     const file = uploadInput.files[0];
     if (!file) return alert('Select a file first');
@@ -130,7 +184,6 @@ compressButton.onclick = async () => {
     compressButton.disabled = true;
 
     if (!ffmpeg.loaded) {
-        let start = Date.now()
         compressButton.textContent = 'Loading FFmpeg...';
         
         const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm';
