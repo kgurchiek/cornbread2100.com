@@ -4,8 +4,53 @@ const ffmpeg = new FFmpeg();
 
 const uploadLabel = document.getElementById('upload-label');
 const uploadInput = document.getElementById('upload');
+const resolutionDropdown = document.getElementById('set-resolution');
 const compressButton = document.getElementById('compress-button');
 const outputVideo = document.getElementById('output-video');
+const errorContainer = document.getElementById('error-container');
+
+let errorQueue = [];
+function error(message, header = 'Error') {
+    let error = document.createElement('div');
+    error.classList.add('error', 'alert');
+    error.innerHTML = `
+            <button class="delete-error" onclick="this.parentElement.classList.add('remove')">
+                <svg fill="currentColor">
+                    <use href="#icon-x"></use>
+                </svg>
+            </button>
+            <strong>${header}</strong>
+            <br>
+            <span class="message">${message}</span>
+        `;
+    error.addEventListener('animationend', (a) => {
+        switch (a.animationName) {
+            case 'alert': {
+                error.classList.remove('alert');
+                break;
+            }
+            case 'raise-alert': {
+                error.classList.remove('raise');
+                break;
+            }
+            case 'remove-alert': {
+                error.remove();
+                break;
+            }
+        }
+    });
+    errorQueue.push(error);
+    return error;
+}
+
+setInterval(() => {
+    if (errorQueue.length == 0) return;
+    if (document.getElementsByClassName('error alert').length > 0 || document.getElementsByClassName('raise').length > 0) return;
+    let error = errorQueue.splice(0, 1)[0];
+    for (let element of errorContainer.children) element.classList.add('raise');
+    errorContainer.appendChild(error);
+    setTimeout(() => error.classList.add('remove'), 10000);
+});
 
 window.addEventListener('drop', (e) => {
     if ([...e.dataTransfer.items].some((item) => item.kind == 'file')) e.preventDefault();
@@ -18,25 +63,86 @@ window.addEventListener('dragover', (e) => {
     }
 });
 
+const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm';
+    await ffmpeg.load({
+    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+    workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
+});
+
+let file;
 let format;
-async function processFile(file) {
+let resolutions = [
+    { ratio: '21:9', resolution: '3440 x 1440' },
+    { ratio: '21:9', resolution: '2560 x 1080' },
+    { ratio: '17:9', resolution: '4096 x 2160' },
+    { ratio: '17:9', resolution: '2048 x 1080' },
+    { ratio: '16:9', resolution: '3840 x 2160' },
+    { ratio: '16:9', resolution: '2560 x 1440' },
+    { ratio: '16:9', resolution: '1920 x 1080' },
+    { ratio: '16:9', resolution: '1600 x 900' },
+    { ratio: '16:9', resolution: '1366 x 768' },
+    { ratio: '16:9', resolution: '1280 x 720' },
+    { ratio: '16:9', resolution: '1024 x 576' },
+    { ratio: '16:9', resolution: '854 x 480' },
+    { ratio: '5:3', resolution: '1280 x 768' },
+    { ratio: '5:3', resolution: '800 x 480' },
+    { ratio: '8:5', resolution: '2560 x 1600' },
+    { ratio: '8:5', resolution: '1920 x 1200' },
+    { ratio: '8:5', resolution: '1680 x 1050' },
+    { ratio: '8:5', resolution: '1440 x 900' },
+    { ratio: '8:5', resolution: '1280 x 800' },
+    { ratio: '8:5', resolution: '320 x 200' },
+    { ratio: '3:2', resolution: '1440 x 960' },
+    { ratio: '3:2', resolution: '1280 x 854' },
+    { ratio: '3:2', resolution: '1152 x 768' },
+    { ratio: '3:2', resolution: '480 x 320' },
+    { ratio: '4:3', resolution: '2048 x 1536' },
+    { ratio: '4:3', resolution: '1600 x 1200' },
+    { ratio: '4:3', resolution: '1440 x 1080' },
+    { ratio: '4:3', resolution: '1400 x 1050' },
+    { ratio: '4:3', resolution: '1280 x 960' },
+    { ratio: '4:3', resolution: '1152 x 864' },
+    { ratio: '4:3', resolution: '1024 x 768' },
+    { ratio: '4:3', resolution: '800 x 600' },
+    { ratio: '4:3', resolution: '768 x 576' },
+    { ratio: '4:3', resolution: '640 x 480' },
+    { ratio: '4:3', resolution: '384 x 288' },
+    { ratio: '4:3', resolution: '320 x 240' },
+    { ratio: '5:4', resolution: '2560 x 2048' },
+    { ratio: '5:4', resolution: '1280 x 1024' }
+].reverse();
+async function processFile(f) {
+    file = f;
+    let dropdownButton = resolutionDropdown.getElementsByClassName('dropdown-button')[0];
+    dropdownButton.classList.add('disabled');
+    compressButton.classList.add('disabled');
     uploadLabel.children[1].innerHTML = `Uploaded: ${file.name}`;
     uploadLabel.classList.add('uploaded');
 
-    if (!ffmpeg.loaded) {
-        compressButton.textContent = 'Loading FFmpeg...';
-        
-        const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm';
-        await ffmpeg.load({
-            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-            workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
-        });
-    }
-
     await ffmpeg.writeFile('input', await fetchFile(file));
-    format = await getFormat('input');
+    format = await probe('input');
     console.log(format);
+    let width = format.stream.width;
+    let height = format.stream.height;
+    if (isNaN(width) || isNaN(parseInt(width))) error(`Invalid stream width: "${width}"`, 'Error processing video');
+    if (isNaN(height) || isNaN(parseInt(height))) error(`Invalid stream height: "${height}"`, 'Error processing video');
+    width = parseInt(width);
+    height = parseInt(height);
+    let resolution = resolutions.find(a => a.resolution == `${width} x ${height}`) || { resolution: `${width} x ${height}` };
+    resolutionDropdown.getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${resolution.resolution}`;
+    let dropdownContent = resolutionDropdown.getElementsByClassName('dropdown-content')[0];
+    Array.from(dropdownContent.children).forEach(a => a.remove());
+    for (let option of resolution.ratio == null ? [resolution] : resolutions.filter(a => a.ratio == resolution.ratio)) {
+        let [optionWidth, optionHeight] = option.resolution.split('x').map(a => parseInt(a.trim()));
+        let element = document.createElement('a');
+        element.onclick = () => window.setResolution(option.resolution.replaceAll(' ', '').replace('x', ':'), option.resolution);
+        element.innerText = `${option.resolution} (${((optionWidth * optionHeight) / (width * height) * 100).toFixed(0)}%)`;
+        dropdownContent.appendChild(element);
+    }
+    
+    dropdownButton.classList.remove('disabled');
+    compressButton.classList.remove('disabled');
 }
 
 uploadLabel.addEventListener('drop', (e) => {
@@ -67,6 +173,7 @@ uploadLabel.addEventListener('dragleave', (e) => {
 });
 
 window.toggleDropdown = (element, set) => {
+    if (!set && element.classList.contains('disabled')) return;
     if (set == null) {
         element.parentElement.getElementsByClassName('dropdown-content')[0].classList.toggle('expanded');
         element.classList.toggle('expanded');
@@ -159,45 +266,41 @@ const updateSizeSlider = () => sizeSlider.value = sizeText.value;
 sizeSlider.addEventListener('input', updateSizeText);
 sizeText.addEventListener('input', updateSizeSlider);
 
-async function getFormat(input) {
+async function probe(input) {
     await ffmpeg.ffprobe([
         '-show_format',
+        '-select_streams', 'v:0',
+        '-show_entries', 'stream=width,height',
         '-i', input,
         '-o', 'output.txt'
     ]);
     let output = new TextDecoder().decode(await ffmpeg.readFile('output.txt'));
-    console.log(output)
-    output = output.slice(output.indexOf('[FORMAT]') + 8, output.indexOf('[/FORMAT]')).trim().split('\n');
-    let data = { tags: {} };
-    for (let line of output) {
+    let streamString = output.slice(output.indexOf('[STREAM]') + 8, output.indexOf('[/STREAM]')).trim().split('\n');
+    let formatString = output.slice(output.indexOf('[FORMAT]') + 8, output.indexOf('[/FORMAT]')).trim().split('\n');
+    let data = { stream: {}, format: { tags: {} }};
+    for (let line of streamString) {
         line = line.trim().split('=');
-        if (line[0].startsWith('TAG:')) data.tags[line[0].slice(4)] = line[1];
-        else data[line[0]] = line[1];
+        data.stream[line[0]] = line[1];
+    }
+    for (let line of formatString) {
+        line = line.trim().split('=');
+        if (line[0].startsWith('TAG:')) data.format.tags[line[0].slice(4)] = line[1];
+        else data.format[line[0]] = line[1];
     }
     return data;
 }
 
 compressButton.onclick = async () => {
+    if (compressButton.classList.contains('disabled')) return;
     const file = uploadInput.files[0];
     if (!file) return alert('Select a file first');
-
-    compressButton.disabled = true;
-
-    if (!ffmpeg.loaded) {
-        compressButton.textContent = 'Loading FFmpeg...';
-        
-        const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm';
-        await ffmpeg.load({
-            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-            workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
-        });
-    }
+    
+    compressButton.classList.add('disabled');
 
     compressButton.textContent = 'Loading video...';
     await ffmpeg.writeFile('input', await fetchFile(file));
 
-    console.log(await getFormat('input'));
+    console.log(await probe('input'));
     return;
 
     let start = Date.now();
@@ -214,7 +317,7 @@ compressButton.onclick = async () => {
         console.log(message);
     });
 
-    let format = await getFormat('input');
+    let format = await probe('input');
     console.log(format);
     let duration = parseFloat(format.duration);
     if (isNaN(duration)) return console.error(`Duration "${format.duration}" is not a number`);
@@ -228,7 +331,7 @@ compressButton.onclick = async () => {
         '-i', 'input',
         '-c:v', 'libx264',
         '-preset', preset,
-        '-vf', 'scale=iw*0.65:ih*0.65',
+        '-vf', `scale=${resolution}`,
         '-r', '30',
         '-b:v', String(targetRate),
         '-c:a', 'aac',
@@ -244,5 +347,5 @@ compressButton.onclick = async () => {
     outputVideo.src = URL.createObjectURL(videoBlob);
 
     compressButton.textContent = 'Done!';
-    compressButton.disabled = false;
+    compressButton.classList.remove('disabled');
 };

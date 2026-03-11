@@ -308,11 +308,17 @@ iframe::-webkit-scrollbar-corner {
     transition: background-color 0.5s, color 0.5s;
 }
 
+#compress-button.disabled, .dropdown-button.disabled {
+    color: #808080;
+    border-color: #b09900;
+    cursor: not-allowed;
+}
+
 .dropdown-button.expanded {
     border-bottom: 2px solid #ffdd00;
 }
 
-.dropdown-button:hover {
+.dropdown-button:hover:not(.disabled) {
     background-color: #ffdd00;
     color: black;
 }
@@ -833,6 +839,7 @@ div.server-list::-webkit-scrollbar-thumb {
 }
 
 .error {
+    text-align: left;
     position: relative;
     background-color: #880000;
     border: 2px solid #ff0000;
@@ -1178,6 +1185,15 @@ input[type="text"].small-text:focus {
     transition: transform 0.5s;
 }
 
+#compress-button.disabled {
+    background-color: #b09900;
+    cursor: not-allowed;
+}
+
 #compress-button:hover {
     transform: scale(1.1);
+}
+
+#compress-button.disabled:hover {
+    transform: scale(1);
 }

@@ -8,6 +8,13 @@
 </head>
 <body>
     <svg style="display: none;">
+        <symbol id="icon-x" viewBox="5 5 14 14">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z" />
+        </symbol>
+    </svg>
+
+    <svg style="display: none;">
         <symbol id="icon-dropdown" viewBox="5.9 7.9 11.8 7.2">
             <path class="st0" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z"/>
         </symbol>
@@ -57,19 +64,15 @@
             </div>
         </div>
         <div id="set-resolution" class="dropdown-container disable-select" style="margin: 10px; justify-self: start;">
-            <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
+            <div class="dropdown-button disabled" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
                 <div style="display: flex; align-items: center;">   
-                    <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Resolution: 1920x1080</div>
+                    <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Waiting for upload...</div>
                     <svg class="flip" fill="currentColor" width="20px" height="20px">
                         <use href="#icon-dropdown"></use>
                     </svg>
                 </div>
             </div>
-            <div class="dropdown-content">
-                <a onclick="setResolution('1920x1080', '1920x1080')">1920x1080</a>
-                <a onclick="setResolution('1280x720', '1280x720')">1280x720</a>
-                <a onclick="setResolution('640x480', '640x480')">640x480</a>
-            </div>
+            <div class="dropdown-content"></div>
         </div>
     </div>
 
@@ -99,6 +102,8 @@
     <div id="compress-button" class="disable-select">Compress</div>
 
     <video id="output-video" controls style="display: none"></video>
+
+    <div id="error-container"></div>
 
     <div id="sidebar"></div>
     <script src="sidebar.js"></script>
