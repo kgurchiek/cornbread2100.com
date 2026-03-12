@@ -1207,7 +1207,7 @@ input[type="text"].small-text:focus {
     background-color: black;
     border: 2px #ffdd00 dotted;
     border-radius: 3px;
-    margin: 20px auto;
+    margin: 10px auto;
     transition: background-color 0.5s, transform 0.5s, color 0.5s, border-color 0.5s, height 0.5s;
 }
 

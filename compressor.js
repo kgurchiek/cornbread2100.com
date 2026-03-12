@@ -127,10 +127,14 @@ async function processFile(f) {
     format = await probe('input');
     if (isNaN(format.format.duration) || isNaN(Number(format.format.duration))) error(`Invalid video duration: "${format.format.duration}"`, 'Error processing video');
     format.format.duration = Number(format.format.duration);
+    let [num, den] = format.stream.r_frame_rate.split('/').map(a => parseInt(a));
+    if (isNaN(num) || isNaN(den)) return error(`Error parsing frame rate: "${format.stream.r_frame_rate}"`);
+    format.stream.r_frame_rate = num / den;
+    frameRateSlider.max = Math.round(format.stream.r_frame_rate);
     let width = format.stream.width;
     let height = format.stream.height;
-    if (isNaN(width) || isNaN(parseInt(width))) error(`Invalid stream width: "${width}"`, 'Error processing video');
-    if (isNaN(height) || isNaN(parseInt(height))) error(`Invalid stream height: "${height}"`, 'Error processing video');
+    if (isNaN(width) || isNaN(parseInt(width))) return error(`Invalid stream width: "${width}"`, 'Error processing video');
+    if (isNaN(height) || isNaN(parseInt(height))) return error(`Invalid stream height: "${height}"`, 'Error processing video');
     width = parseInt(width);
     height = parseInt(height);
     let preset = resolutions.find(a => a.resolution == `${width} x ${height}`) || { resolution: `${width} x ${height}` };
@@ -302,21 +306,32 @@ function updateSizeText() {
     sizeText.value = (sizeSlider.value / 100 * size / sizeUnit).toFixed(0);
     targetSize = Math.round(sizeText.value);
 }
+sizeSlider.addEventListener('input', updateSizeText);
 function updateSizeSlider() {
     let size = file?.size || 100 * 1024 * 1024;
     sizeSlider.value = (sizeText.value * sizeUnit) / size * 100;
     targetSize = Math.round(sizeText.value);
 }
 updateSizeSlider();
-
-sizeSlider.addEventListener('input', updateSizeText);
 sizeText.addEventListener('input', updateSizeSlider);
+
+let frameRateText = document.getElementById('frame-rate-text');
+let frameRateSlider = document.getElementById('frame-rate-slider');
+function updateFrameRateText() {
+    frameRateText.value = frameRateSlider.value;
+}
+frameRateSlider.addEventListener('input', updateFrameRateText);
+function updateFrameRateSlider() {
+    frameRateSlider.value = frameRateText.value;
+}
+updateSizeSlider();
+frameRateText.addEventListener('input', updateFrameRateSlider);
 
 async function probe(input) {
     await ffmpeg.ffprobe([
         '-show_format',
         '-select_streams', 'v:0',
-        '-show_entries', 'stream=width,height',
+        '-show_entries', 'stream=width,height,r_frame_rate',
         '-i', input,
         '-o', 'output.txt'
     ]);
@@ -366,7 +381,7 @@ compressButton.onclick = async () => {
         '-c:v', 'libx264',
         '-preset', preset,
         '-vf', `scale=${resolution}`,
-        '-r', '30',
+        '-r', frameRateText.value,
         '-b:v', String(targetRate),
         '-c:a', 'aac',
         '-b:a', '128k',
@@ -377,7 +392,7 @@ compressButton.onclick = async () => {
         '-c:v', 'libx264',
         '-preset', preset,
         '-vf', `scale=${resolution}`,
-        '-r', '30',
+        '-r', frameRateText.value,
         '-b:v', String(targetRate),
         '-c:a', 'aac',
         '-b:a', '128k',

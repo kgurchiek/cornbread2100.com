@@ -38,7 +38,6 @@
             </svg>
         </div>
     </label>
-    <br><br>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: start;">
         <div id="set-preset" class="dropdown-container disable-select" style="margin: 10px; justify-self: end;">
@@ -76,7 +75,15 @@
         </div>
     </div>
 
-    <div id="size-options" style="width: 30%; margin: 0 auto;">
+    <div id="frame-rate-option" class="option-box disable-select" style="width: 30%; margin: 10px auto 20px auto; display: grid; grid-template-columns: 9fr 1fr;">
+        <h2 style="grid-column: 1 / span 2;">Frame Rate</h2>
+        <input id="frame-rate-slider" type="range" min="1" max="60" value="45" step="1" class="slider" style="margin: 20px 15px;">
+        <div style="display: flex; margin-right: 15px;">
+            <input id="frame-rate-text" type="text" class="small-text" value="45" style="margin-right: 5px; width: 30px;">
+        </div>
+    </div>
+
+    <div id="size-options" style="width: 30%; margin: 10px auto;">
         <div class="option-tab-container">
             <div id="percentage-tab" onclick="setSizeMode('percentage')" class="option-tab disable-select selected-tab" style="padding: 5px 10px;">Percentage</div>
             <div id="size-tab" onclick="setSizeMode('size')" class="option-tab disable-select" style="padding: 5px 10px;">File Size</div>
