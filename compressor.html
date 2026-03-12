@@ -94,14 +94,28 @@
             <input id="size-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
             <div style="display: flex; margin-right: 15px;">
                 <input id="size-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px;">
-                <span style="align-content: center;">MB</span>
+                <div id="set-size-unit" class="inline-dropdown-container disable-select" style="align-content: center;">
+                    <div class="inline-dropdown-button" onclick="toggleInlineDropdown(this)">
+                        <div style="display: flex; align-items: center;">   
+                            <div class="dropdown-text" style="font-size: 17px; margin-right: 15px;">MB</div>
+                            <svg class="flip" fill="currentColor" width="20px" height="20px">
+                                <use href="#icon-dropdown"></use>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="inline-dropdown-content">
+                        <a onclick="setSizeUnit(1024*1024, 'MB')">MB</a>
+                        <a onclick="setSizeUnit(1024, 'KB')">KB</a>
+                        <a onclick="setSizeUnit(1, 'B')">B</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="compress-button" class="disable-select">Compress</div>
+    <div id="compress-button" class="disabled disable-select">Compress</div>
 
-    <video id="output-video" controls style="display: none"></video>
+    <video id="output-video" controls style="width: 30%; border-radius: 10px; display: none;"></video>
 
     <div id="error-container"></div>
 

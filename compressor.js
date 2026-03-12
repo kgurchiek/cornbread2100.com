@@ -114,6 +114,9 @@ let resolutions = [
 ].reverse();
 async function processFile(f) {
     file = f;
+    if (sizeMode == 'percentage') updatePercentageSlider();
+    if (sizeMode == 'size') updateSizeSlider();
+
     let dropdownButton = resolutionDropdown.getElementsByClassName('dropdown-button')[0];
     dropdownButton.classList.add('disabled');
     compressButton.classList.add('disabled');
@@ -122,18 +125,20 @@ async function processFile(f) {
 
     await ffmpeg.writeFile('input', await fetchFile(file));
     format = await probe('input');
-    console.log(format);
+    if (isNaN(format.format.duration) || isNaN(Number(format.format.duration))) error(`Invalid video duration: "${format.format.duration}"`, 'Error processing video');
+    format.format.duration = Number(format.format.duration);
     let width = format.stream.width;
     let height = format.stream.height;
     if (isNaN(width) || isNaN(parseInt(width))) error(`Invalid stream width: "${width}"`, 'Error processing video');
     if (isNaN(height) || isNaN(parseInt(height))) error(`Invalid stream height: "${height}"`, 'Error processing video');
     width = parseInt(width);
     height = parseInt(height);
-    let resolution = resolutions.find(a => a.resolution == `${width} x ${height}`) || { resolution: `${width} x ${height}` };
-    resolutionDropdown.getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${resolution.resolution}`;
+    let preset = resolutions.find(a => a.resolution == `${width} x ${height}`) || { resolution: `${width} x ${height}` };
+    window.setResolution(preset.resolution.replaceAll(' ', '').replace('x', ':'), preset.resolution);
+    resolutionDropdown.getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${preset.resolution}`;
     let dropdownContent = resolutionDropdown.getElementsByClassName('dropdown-content')[0];
     Array.from(dropdownContent.children).forEach(a => a.remove());
-    for (let option of resolution.ratio == null ? [resolution] : resolutions.filter(a => a.ratio == resolution.ratio)) {
+    for (let option of preset.ratio == null ? [preset] : resolutions.filter(a => a.ratio == preset.ratio)) {
         let [optionWidth, optionHeight] = option.resolution.split('x').map(a => parseInt(a.trim()));
         let element = document.createElement('a');
         element.onclick = () => window.setResolution(option.resolution.replaceAll(' ', '').replace('x', ':'), option.resolution);
@@ -149,7 +154,6 @@ uploadLabel.addEventListener('drop', (e) => {
     if ([...e.dataTransfer.items].some((item) => item.kind != 'file')) return;
     e.preventDefault();
     uploadLabel.classList.remove('drag');
-    console.log(e.dataTransfer);
     processFile(e.dataTransfer.files[0]);
 });
 
@@ -182,6 +186,20 @@ window.toggleDropdown = (element, set) => {
         element.classList.add('expanded');
     } else {
         element.parentElement.getElementsByClassName('dropdown-content')[0].classList.remove('expanded');
+        element.classList.remove('expanded');
+    }
+}
+
+window.toggleInlineDropdown = (element, set) => {
+    if (!set && element.classList.contains('disabled')) return;
+    if (set == null) {
+        element.parentElement.getElementsByClassName('inline-dropdown-content')[0].classList.toggle('expanded');
+        element.classList.toggle('expanded');
+    } else if (set) {
+        element.parentElement.getElementsByClassName('inline-dropdown-content')[0].classList.add('expanded');
+        element.classList.add('expanded');
+    } else {
+        element.parentElement.getElementsByClassName('inline-dropdown-content')[0].classList.remove('expanded');
         element.classList.remove('expanded');
     }
 }
@@ -225,6 +243,15 @@ window.setResolution = (r, text) => {
     document.getElementById('set-resolution').getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${text}`;
 }
 
+let sizeUnit = 1024*1024;
+window.setSizeUnit = (u, text) => {
+    sizeUnit = u;
+    document.getElementById('set-size-unit').getElementsByClassName('dropdown-text')[0].innerText = text;
+    window.toggleInlineDropdown(document.getElementById('set-size-unit').getElementsByClassName('inline-dropdown-button')[0]);
+    updateSizeSlider();
+}
+
+let sizeMode = 'percentage';
 let sizeTabs = [
     document.getElementById('percentage-tab'),
     document.getElementById('size-tab')
@@ -236,33 +263,52 @@ let sizeContents = [
 window.setSizeMode = (type) => {
     sizeTabs.forEach(a => a.classList.remove('selected-tab'));
     sizeContents.forEach(a => a.style.display = 'none');
+    sizeMode = type;
     switch (type) {
         case 'percentage': {
             sizeTabs[0].classList.add('selected-tab');
             sizeContents[0].style.display = 'grid';
+            updatePercentageSlider();
             break;
         }
         case 'size': {
             sizeTabs[1].classList.add('selected-tab');
             sizeContents[1].style.display = 'grid';
+            updateSizeSlider();
             break;
         }
     }
 }
 
+let targetSize;
 let percentageText = document.getElementById('percentage-text');
 let percentageSlider = document.getElementById('percentage-slider');
-const updatePercentageText = () => percentageText.value = percentageSlider.value;
-updatePercentageText();
-const updatePercentageSlider = () => percentageSlider.value = percentageText.value;
+function updatePercentageText() {
+    percentageText.value = Number(percentageSlider.value).toFixed(0);
+    if (file != null) targetSize = Math.round(percentageText.value / 100 * file.size);
+}
+function updatePercentageSlider() {
+    percentageSlider.value = percentageText.value;
+    if (file != null) targetSize = Math.round(percentageText.value / 100 * file.size);
+}
+updatePercentageSlider();
 percentageSlider.addEventListener('input', updatePercentageText);
 percentageText.addEventListener('input', updatePercentageSlider);
 
 let sizeText = document.getElementById('size-text');
 let sizeSlider = document.getElementById('size-slider');
-const updateSizeText = () => sizeText.value = sizeSlider.value;
-updateSizeText();
-const updateSizeSlider = () => sizeSlider.value = sizeText.value;
+function updateSizeText() {
+    let size = file?.size || 100 * 1024 * 1024;
+    sizeText.value = (sizeSlider.value / 100 * size / sizeUnit).toFixed(0);
+    targetSize = Math.round(sizeText.value);
+}
+function updateSizeSlider() {
+    let size = file?.size || 100 * 1024 * 1024;
+    sizeSlider.value = (sizeText.value * sizeUnit) / size * 100;
+    targetSize = Math.round(sizeText.value);
+}
+updateSizeSlider();
+
 sizeSlider.addEventListener('input', updateSizeText);
 sizeText.addEventListener('input', updateSizeSlider);
 
@@ -292,16 +338,9 @@ async function probe(input) {
 
 compressButton.onclick = async () => {
     if (compressButton.classList.contains('disabled')) return;
-    const file = uploadInput.files[0];
-    if (!file) return alert('Select a file first');
+    if (!file) return error('Upload a file first');
     
     compressButton.classList.add('disabled');
-
-    compressButton.textContent = 'Loading video...';
-    await ffmpeg.writeFile('input', await fetchFile(file));
-
-    console.log(await probe('input'));
-    return;
 
     let start = Date.now();
     ffmpeg.on('progress', ({ progress, time }) => {
@@ -317,16 +356,22 @@ compressButton.onclick = async () => {
         console.log(message);
     });
 
-    let format = await probe('input');
-    console.log(format);
-    let duration = parseFloat(format.duration);
-    if (isNaN(duration)) return console.error(`Duration "${format.duration}" is not a number`);
-    let bitrate = (8 * 1024 * 1024 * 8) / duration;
-    let targetRate = Math.floor(bitrate - 128000);
+    let bitrate = targetSize * 8 / format.format.duration;
+    let targetRate = Math.max(Math.floor(bitrate - 128000), 1000); // TODO: warning when too low
 
     let output = `${file.name.split('.')[0]}-compressed.${file.name.split('.')[1]}`;
     
-    compressButton.textContent = 'Compressing...';
+    console.log([
+        '-i', 'input',
+        '-c:v', 'libx264',
+        '-preset', preset,
+        '-vf', `scale=${resolution}`,
+        '-r', '30',
+        '-b:v', String(targetRate),
+        '-c:a', 'aac',
+        '-b:a', '128k',
+        output
+    ])
     await ffmpeg.exec([
         '-i', 'input',
         '-c:v', 'libx264',
@@ -339,13 +384,11 @@ compressButton.onclick = async () => {
         output
     ]);
 
-    compressButton.textContent = 'Outputing...';
-
     const data = await ffmpeg.readFile(output);
 
     const videoBlob = new Blob([data.buffer], { type: file.type });
     outputVideo.src = URL.createObjectURL(videoBlob);
+    outputVideo.style.removeProperty('display');
 
-    compressButton.textContent = 'Done!';
     compressButton.classList.remove('disabled');
 };
