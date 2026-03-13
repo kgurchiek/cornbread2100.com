@@ -75,44 +75,44 @@ const baseURL = isSecureContext ? 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/
 let file;
 let format;
 let resolutions = [
-    { ratio: '21:9', resolution: '3440 x 1440' },
-    { ratio: '21:9', resolution: '2560 x 1080' },
-    { ratio: '17:9', resolution: '4096 x 2160' },
-    { ratio: '17:9', resolution: '2048 x 1080' },
-    { ratio: '16:9', resolution: '3840 x 2160' },
-    { ratio: '16:9', resolution: '2560 x 1440' },
-    { ratio: '16:9', resolution: '1920 x 1080' },
-    { ratio: '16:9', resolution: '1600 x 900' },
-    { ratio: '16:9', resolution: '1366 x 768' },
-    { ratio: '16:9', resolution: '1280 x 720' },
-    { ratio: '16:9', resolution: '1024 x 576' },
-    { ratio: '16:9', resolution: '854 x 480' },
-    { ratio: '5:3', resolution: '1280 x 768' },
-    { ratio: '5:3', resolution: '800 x 480' },
-    { ratio: '8:5', resolution: '2560 x 1600' },
-    { ratio: '8:5', resolution: '1920 x 1200' },
-    { ratio: '8:5', resolution: '1680 x 1050' },
-    { ratio: '8:5', resolution: '1440 x 900' },
-    { ratio: '8:5', resolution: '1280 x 800' },
-    { ratio: '8:5', resolution: '320 x 200' },
-    { ratio: '3:2', resolution: '1440 x 960' },
-    { ratio: '3:2', resolution: '1280 x 854' },
-    { ratio: '3:2', resolution: '1152 x 768' },
-    { ratio: '3:2', resolution: '480 x 320' },
-    { ratio: '4:3', resolution: '2048 x 1536' },
-    { ratio: '4:3', resolution: '1600 x 1200' },
-    { ratio: '4:3', resolution: '1440 x 1080' },
-    { ratio: '4:3', resolution: '1400 x 1050' },
-    { ratio: '4:3', resolution: '1280 x 960' },
-    { ratio: '4:3', resolution: '1152 x 864' },
-    { ratio: '4:3', resolution: '1024 x 768' },
-    { ratio: '4:3', resolution: '800 x 600' },
-    { ratio: '4:3', resolution: '768 x 576' },
-    { ratio: '4:3', resolution: '640 x 480' },
-    { ratio: '4:3', resolution: '384 x 288' },
-    { ratio: '4:3', resolution: '320 x 240' },
-    { ratio: '5:4', resolution: '2560 x 2048' },
-    { ratio: '5:4', resolution: '1280 x 1024' }
+    { ratio: '21:9', resolution: '3440x1440' },
+    { ratio: '21:9', resolution: '2560x1080' },
+    { ratio: '17:9', resolution: '4096x2160' },
+    { ratio: '17:9', resolution: '2048x1080' },
+    { ratio: '16:9', resolution: '3840x2160' },
+    { ratio: '16:9', resolution: '2560x1440' },
+    { ratio: '16:9', resolution: '1920x1080' },
+    { ratio: '16:9', resolution: '1600x900' },
+    { ratio: '16:9', resolution: '1366x768' },
+    { ratio: '16:9', resolution: '1280x720' },
+    { ratio: '16:9', resolution: '1024x576' },
+    { ratio: '16:9', resolution: '854x480' },
+    { ratio: '5:3', resolution: '1280x768' },
+    { ratio: '5:3', resolution: '800x480' },
+    { ratio: '8:5', resolution: '2560x1600' },
+    { ratio: '8:5', resolution: '1920x1200' },
+    { ratio: '8:5', resolution: '1680x1050' },
+    { ratio: '8:5', resolution: '1440x900' },
+    { ratio: '8:5', resolution: '1280x800' },
+    { ratio: '8:5', resolution: '320x200' },
+    { ratio: '3:2', resolution: '1440x960' },
+    { ratio: '3:2', resolution: '1280x854' },
+    { ratio: '3:2', resolution: '1152x768' },
+    { ratio: '3:2', resolution: '480x320' },
+    { ratio: '4:3', resolution: '2048x1536' },
+    { ratio: '4:3', resolution: '1600x1200' },
+    { ratio: '4:3', resolution: '1440x1080' },
+    { ratio: '4:3', resolution: '1400x1050' },
+    { ratio: '4:3', resolution: '1280x960' },
+    { ratio: '4:3', resolution: '1152x864' },
+    { ratio: '4:3', resolution: '1024x768' },
+    { ratio: '4:3', resolution: '800x600' },
+    { ratio: '4:3', resolution: '768x576' },
+    { ratio: '4:3', resolution: '640x480' },
+    { ratio: '4:3', resolution: '384x288' },
+    { ratio: '4:3', resolution: '320x240' },
+    { ratio: '5:4', resolution: '2560x2048' },
+    { ratio: '5:4', resolution: '1280x1024' }
 ].reverse();
 async function processFile(f) {
     file = f;
@@ -139,7 +139,7 @@ async function processFile(f) {
     if (isNaN(height) || isNaN(parseInt(height))) return error(`Invalid stream height: "${height}"`, 'Error processing video');
     width = parseInt(width);
     height = parseInt(height);
-    let preset = resolutions.find(a => a.resolution == `${width} x ${height}`) || { resolution: `${width} x ${height}` };
+    let preset = resolutions.find(a => a.resolution == `${width}x${height}`) || { resolution: `${width}x${height}` };
     window.setResolution(preset.resolution.replaceAll(' ', '').replace('x', ':'), preset.resolution);
     resolutionDropdown.getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${preset.resolution}`;
     let dropdownContent = resolutionDropdown.getElementsByClassName('dropdown-content')[0];
@@ -157,7 +157,7 @@ async function processFile(f) {
 }
 
 uploadLabel.addEventListener('drop', (e) => {
-    if ([...e.dataTransfer.items].some((item) => item.kind != 'file')) return;
+    if (![...e.dataTransfer.items].some((item) => item.kind == 'file')) return;
     e.preventDefault();
     uploadLabel.classList.remove('drag');
     processFile(e.dataTransfer.files[0]);
@@ -359,14 +359,22 @@ compressButton.onclick = async () => {
     
     compressButton.classList.add('disabled');
 
+    const progressBar = document.getElementById('progress-bar');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressText = document.getElementById('progress-text');
     let start = Date.now();
     ffmpeg.on('progress', ({ progress, time }) => {
         let speed = progress / (Date.now() - start) * 1000;
         let estimate = Math.min((1 - progress) / speed, 99 * 3600 + 59 * 60 + 59);
+        let text = 'Estimated ';
         let hours = Math.floor(estimate / 3600);
+        if (hours > 0) text += `${'0'.repeat(2 - String(hours).length)}${hours}:`;
         let minutes = Math.floor(estimate % 3600 / 60);
+        if (hours > 0 || minutes > 0) text += `${'0'.repeat(2 - String(minutes).length)}${minutes}:`;
         let seconds = Math.floor(estimate % 60);
-        console.log(`Progress: ${(progress * 100).toFixed(1)}% (${(time / 1000000).toFixed(1)}/${(time/progress / 1000000).toFixed(1)}s),  Estimated ${'0'.repeat(2 - String(hours).length)}${hours}:${'0'.repeat(2 - String(minutes).length)}${minutes}:${'0'.repeat(2 - String(seconds).length)}${seconds} remaining`);
+        text += `${hours == 0 && minutes == 0 ? `${seconds}s` : `${'0'.repeat(2 - String(seconds).length)}${seconds}`} remaining`;
+        progressText.innerText = text;
+        progressBarFill.style.width = `${(progress * 100).toFixed(1)}%`;
     });
 
     ffmpeg.on('log', ({ message }) => {
@@ -378,17 +386,9 @@ compressButton.onclick = async () => {
 
     let output = `${file.name.split('.')[0]}-compressed.${file.name.split('.')[1]}`;
     
-    console.log([
-        '-i', 'input',
-        '-c:v', 'libx264',
-        '-preset', preset,
-        '-vf', `scale=${resolution}`,
-        '-r', frameRateText.value,
-        '-b:v', String(targetRate),
-        '-c:a', 'aac',
-        '-b:a', '128k',
-        output
-    ])
+    progressBar.style.removeProperty('display');
+    progressText.innerText = '';
+    progressText.style.removeProperty('display');
     await ffmpeg.exec([
         '-i', 'input',
         '-c:v', 'libx264',
@@ -402,6 +402,8 @@ compressButton.onclick = async () => {
     ]);
 
     const data = await ffmpeg.readFile(output);
+    progressBar.style.display = 'none';
+    progressText.style.display = 'none';
 
     const videoBlob = new Blob([data.buffer], { type: file.type });
     outputVideo.src = URL.createObjectURL(videoBlob);

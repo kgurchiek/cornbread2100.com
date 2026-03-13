@@ -30,7 +30,7 @@
     <h1>Local Video Compressor</h1>
     
     <div id="compressor-content">
-        <label id="upload-label">
+        <label id="upload-label" class="disable-select">
             <input type="file" id="upload" style="display: none;"/>
             <div style="display: flex; justify-content: center; align-items: center;">
                 Upload
@@ -127,6 +127,11 @@
     
         <div id="compress-button" class="disabled disable-select">Compress</div>
     
+        <div id="progress-bar" class="progress-bar" style="height: 10px; ">
+            <div id="progress-bar-fill" class="progress-bar-fill" style="height: 10px; width: 0;"></div>
+        </div>
+        <div id="progress-text" style="margin: 5px auto;"></div>
+
         <video id="output-video" controls style="border-radius: 10px; display: none; width: 100%;"></video>
     </div>
 

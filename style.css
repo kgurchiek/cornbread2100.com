@@ -1000,25 +1000,20 @@ div.playerlist::-webkit-scrollbar-thumb {
     text-align: center;
 }
 
-#credits-bar {
-    width: 80%;
-    height: 10px;
-    margin: 10px auto 0;
-    border-radius: 5px;
+.progress-bar {
+    border-radius: 9999px;
     background-color: #888888;
 }
 
-#credits-bar-fill {
-    width: 100%;
-    height: 10px;
-    border-radius: 5px;
+.progress-bar-fill {
+    border-radius: 9999px;
     background: #ffdd00;
     position: relative;
     overflow: hidden;
     transition: width 0.5s;
 }
 
-#credits-bar-fill::after {
+.progress-bar-fill::after {
     content: "";
     position: absolute;
     top: 0;
@@ -1211,12 +1206,12 @@ input[type="text"].small-text:focus {
     border: 2px #ffdd00 dotted;
     border-radius: 3px;
     margin: 10px auto;
-    transition: background-color 0.5s, transform 0.5s, color 0.5s, border-color 0.5s, height 0.5s;
+    transition: background-color 0.5s, transform 0.5s, color 0.5s, border-color 0.5s, aspect-ratio 0.5s;
 }
 
 #upload-label.uploaded {
     border: 2px #ffdd00 solid;
-    height: 100px;
+    aspect-ratio: 5;
 }
 
 #upload-label:hover {
