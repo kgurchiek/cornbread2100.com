@@ -10,9 +10,10 @@ const outputVideo = document.getElementById('output-video');
 const errorContainer = document.getElementById('error-container');
 
 let errorQueue = [];
-function error(message, header = 'Error') {
+function error(message, header = 'Error', color = '#ff0000') {
     let error = document.createElement('div');
     error.classList.add('error', 'alert');
+    error.style.setProperty('--color', color)
     error.innerHTML = `
             <button class="delete-error" onclick="this.parentElement.classList.add('remove')">
                 <svg fill="currentColor">
@@ -63,7 +64,8 @@ window.addEventListener('dragover', (e) => {
     }
 });
 
-const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm';
+if (!isSecureContext) error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
+const baseURL = isSecureContext ? 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm' : 'https://cdn.jsdelivr.net/npm/@ffmpeg/core/dist/esm';
     await ffmpeg.load({
     coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
     wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),

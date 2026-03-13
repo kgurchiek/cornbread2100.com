@@ -29,100 +29,106 @@
 
     <h1>Local Video Compressor</h1>
     
-    <label id="upload-label">
-        <input type="file" id="upload" style="display: none;"/>
-        <div style="display: flex; justify-content: center; align-items: center;">
-            Upload
-            <svg stroke="currentColor" fill="none" width="30px" height="30px" style="margin: 0 5px">
-                <use href="#icon-upload"></use>
-            </svg>
-        </div>
-    </label>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: start;">
-        <div id="set-preset" class="dropdown-container disable-select" style="margin: 10px; justify-self: end;">
-            <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
-                <div style="display: flex; align-items: center;">
-                    <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Preset: Ultra Fast</div>
-                    <svg class="flip" fill="currentColor" width="20px" height="20px">
-                        <use href="#icon-dropdown"></use>
-                    </svg>
-                </div>
+    <div id="compressor-content">
+        <label id="upload-label">
+            <input type="file" id="upload" style="display: none;"/>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                Upload
+                <svg stroke="currentColor" fill="none" width="30px" height="30px" style="margin: 0 5px">
+                    <use href="#icon-upload"></use>
+                </svg>
             </div>
-            <div class="dropdown-content fade-bottom">
-                <a onclick="setPreset('ultrafast', 'Ultra Fast')">Ultra Fast</a>
-                <a onclick="setPreset('superfast', 'Super Fast')">Super Fast</a>
-                <a onclick="setPreset('veryfast', 'Very Fast')">Very Fast</a>
-                <a onclick="setPreset('faster', 'Faster')">Faster</a>
-                <a onclick="setPreset('fast', 'Fast')">Fast</a>
-                <a onclick="setPreset('medium', 'Medium')">Medium</a>
-                <a onclick="setPreset('slow', 'Slow')">Slow</a>
-                <a onclick="setPreset('slower', 'Slower')">Slower</a>
-                <a onclick="setPreset('veryslow', 'Very Slow')">Very Slow</a>
-                <a onclick="setPreset('placebo', 'Placebo')">Placebo</a>
-            </div>
-        </div>
-        <div id="set-resolution" class="dropdown-container disable-select" style="margin: 10px; justify-self: start;">
-            <div class="dropdown-button disabled" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
-                <div style="display: flex; align-items: center;">   
-                    <div class="dropdown-text" style="font-size: 20px; padding: 0 15px;">Waiting for upload...</div>
-                    <svg class="flip" fill="currentColor" width="20px" height="20px">
-                        <use href="#icon-dropdown"></use>
-                    </svg>
-                </div>
-            </div>
-            <div class="dropdown-content"></div>
-        </div>
-    </div>
-
-    <div id="frame-rate-option" class="option-box disable-select" style="width: 30%; margin: 10px auto 20px auto; display: grid; grid-template-columns: 9fr 1fr;">
-        <h2 style="grid-column: 1 / span 2;">Frame Rate</h2>
-        <input id="frame-rate-slider" type="range" min="1" max="60" value="45" step="1" class="slider" style="margin: 20px 15px;">
-        <div style="display: flex; margin-right: 15px;">
-            <input id="frame-rate-text" type="text" class="small-text" value="45" style="margin-right: 5px; width: 30px;">
-        </div>
-    </div>
-
-    <div id="size-options" style="width: 30%; margin: 10px auto;">
-        <div class="option-tab-container">
-            <div id="percentage-tab" onclick="setSizeMode('percentage')" class="option-tab disable-select selected-tab" style="padding: 5px 10px;">Percentage</div>
-            <div id="size-tab" onclick="setSizeMode('size')" class="option-tab disable-select" style="padding: 5px 10px;">File Size</div>
-        </div>
-        <div id="percentage-content" class="option-box disable-select" style="border-top-left-radius: 0; display: grid; grid-template-columns: 9fr 1fr;">
-            <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
-            <input id="percentage-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
-            <div style="display: flex; margin-right: 15px;">
-                <input id="percentage-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px; height: 20px;">
-                <span style="align-content: center;">%</span>
-            </div>
-        </div>
-        <div id="size-content" class="option-box disable-select" style="border-top-left-radius: 0; display: none; grid-template-columns: 9fr 1fr;">
-            <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
-            <input id="size-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
-            <div style="display: flex; margin-right: 15px; align-items: flex-start;">
-                <input id="size-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px; height: 20px;">
-                <div id="set-size-unit" class="inline-dropdown-container disable-select" style="align-content: center;">
-                    <div class="inline-dropdown-button" onclick="toggleInlineDropdown(this)">
-                        <div style="display: flex; align-items: center;">   
-                            <div class="dropdown-text" style="font-size: 17px; margin-right: 15px;">MB</div>
+        </label>
+    
+        <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: start;">
+            <div style="min-width: 100%;">
+                <div id="set-preset" class="dropdown-container disable-select">
+                    <div class="dropdown-button" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
+                        <div style="display: flex; justify-content: right; align-items: center;">
+                            <div class="dropdown-text" style="font-size: 20px; padding: 0 15px; margin: 0 auto;">Preset: Ultra Fast</div>
                             <svg class="flip" fill="currentColor" width="20px" height="20px">
                                 <use href="#icon-dropdown"></use>
                             </svg>
                         </div>
                     </div>
-                    <div class="inline-dropdown-content">
-                        <a onclick="setSizeUnit(1024*1024, 'MB')">MB</a>
-                        <a onclick="setSizeUnit(1024, 'KB')">KB</a>
-                        <a onclick="setSizeUnit(1, 'B')">B</a>
+                    <div class="dropdown-content fade-bottom">
+                        <a onclick="setPreset('ultrafast', 'Ultra Fast')">Ultra Fast</a>
+                        <a onclick="setPreset('superfast', 'Super Fast')">Super Fast</a>
+                        <a onclick="setPreset('veryfast', 'Very Fast')">Very Fast</a>
+                        <a onclick="setPreset('faster', 'Faster')">Faster</a>
+                        <a onclick="setPreset('fast', 'Fast')">Fast</a>
+                        <a onclick="setPreset('medium', 'Medium')">Medium</a>
+                        <a onclick="setPreset('slow', 'Slow')">Slow</a>
+                        <a onclick="setPreset('slower', 'Slower')">Slower</a>
+                        <a onclick="setPreset('veryslow', 'Very Slow')">Very Slow</a>
+                        <a onclick="setPreset('placebo', 'Placebo')">Placebo</a>
+                    </div>
+                </div>
+            </div>
+            <div style="min-width: 100%;">
+                <div id="set-resolution" class="dropdown-container disable-select">
+                    <div class="dropdown-button disabled" onclick="toggleDropdown(this)" style="padding: 10px 15px;">
+                        <div style="display: flex; justify-content: right; align-items: center;">
+                            <div class="dropdown-text" style="font-size: 20px; padding: 0 15px; margin: 0 auto;">Waiting for upload...</div>
+                            <svg class="flip" fill="currentColor" width="20px" height="20px">
+                                <use href="#icon-dropdown"></use>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="dropdown-content"></div>
+                </div>
+            </div>
+        </div>
+    
+        <div id="frame-rate-option" class="option-box disable-select" style="margin: 10px auto 20px auto; display: grid; grid-template-columns: 9fr 1fr;">
+            <h2 style="grid-column: 1 / span 2;">Frame Rate</h2>
+            <input id="frame-rate-slider" type="range" min="1" max="60" value="45" step="1" class="slider" style="margin: 20px 15px;">
+            <div style="display: flex; margin-right: 15px;">
+                <input id="frame-rate-text" type="text" class="small-text" value="45" style="margin-right: 5px; width: 30px;">
+            </div>
+        </div>
+    
+        <div id="size-options" style="margin: 10px auto;">
+            <div class="option-tab-container">
+                <div id="percentage-tab" onclick="setSizeMode('percentage')" class="option-tab disable-select selected-tab" style="padding: 5px 10px;">Percentage</div>
+                <div id="size-tab" onclick="setSizeMode('size')" class="option-tab disable-select" style="padding: 5px 10px;">File Size</div>
+            </div>
+            <div id="percentage-content" class="option-box disable-select" style="border-top-left-radius: 0; display: grid; grid-template-columns: 9fr 1fr;">
+                <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
+                <input id="percentage-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
+                <div style="display: flex; margin-right: 15px;">
+                    <input id="percentage-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px; height: 20px;">
+                    <span style="align-content: center;">%</span>
+                </div>
+            </div>
+            <div id="size-content" class="option-box disable-select" style="border-top-left-radius: 0; display: none; grid-template-columns: 9fr 1fr;">
+                <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
+                <input id="size-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
+                <div style="display: flex; margin-right: 15px; align-items: flex-start;">
+                    <input id="size-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px; height: 20px;">
+                    <div id="set-size-unit" class="inline-dropdown-container disable-select" style="align-content: center;">
+                        <div class="inline-dropdown-button" onclick="toggleInlineDropdown(this)">
+                            <div style="display: flex; align-items: center;">   
+                                <div class="dropdown-text" style="font-size: 17px; margin-right: 15px;">MB</div>
+                                <svg class="flip" fill="currentColor" width="20px" height="20px">
+                                    <use href="#icon-dropdown"></use>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="inline-dropdown-content">
+                            <a onclick="setSizeUnit(1024*1024, 'MB')">MB</a>
+                            <a onclick="setSizeUnit(1024, 'KB')">KB</a>
+                            <a onclick="setSizeUnit(1, 'B')">B</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    
+        <div id="compress-button" class="disabled disable-select">Compress</div>
+    
+        <video id="output-video" controls style="border-radius: 10px; display: none; width: 100%;"></video>
     </div>
-
-    <div id="compress-button" class="disabled disable-select">Compress</div>
-
-    <video id="output-video" controls style="width: 30%; border-radius: 10px; display: none;"></video>
 
     <div id="error-container"></div>
 

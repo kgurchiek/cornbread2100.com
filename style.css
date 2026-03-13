@@ -901,8 +901,11 @@ div.server-list::-webkit-scrollbar-thumb {
 .error {
     text-align: left;
     position: relative;
-    background-color: #880000;
-    border: 2px solid #ff0000;
+    /* background-color: #880000;
+    border: 2px solid #ff0000; */
+    --color: #ff0000;
+    border: 2px solid var(--color);
+    background-color: color-mix(in srgb, var(--color) 50%, black);
     border-radius: 1rem;
     padding: 10px 40px 10px 10px;
     margin: 5px 0px;
@@ -1120,6 +1123,7 @@ div.playerlist::-webkit-scrollbar-thumb {
 .slider {
     -webkit-appearance: none;
     height: 5px;
+    min-width: 0px;
     border-radius: 5px;  
     background: #c8c8c8;
     outline: none;
@@ -1197,8 +1201,7 @@ input[type="text"].small-text:focus {
 }
 
 #upload-label {
-    width: 30%;
-    height: 200px;
+    aspect-ratio: 3;
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -1256,4 +1259,45 @@ input[type="text"].small-text:focus {
 
 #compress-button.disabled:hover {
     transform: scale(1);
+}
+
+#compressor-content {
+    width: 50%;
+    margin: 0 auto;
+}
+
+#set-preset {
+    margin: 0 5px 0 0;
+}
+
+div:has(> #set-preset) {
+    margin: 10px 0 10px 10px;
+    justify-self: end;
+}
+
+div:has(> #set-resolution) {
+    margin: 10px 10px 10px 0;
+    justify-self: start;
+}
+
+#set-resolution {
+    margin: 0 0 0 5px;
+}
+
+@media (max-aspect-ratio: 1) {
+    #compressor-content {
+        width: 70%;
+    }
+
+    div:has(> #set-preset) {
+        margin: 10px 0;
+        grid-column: 1 / span 2;
+        justify-self: center;
+    }
+
+    div:has(> #set-resolution) {
+        margin: 10px 0;
+        grid-column: 1 / span 2;
+        justify-self: center;
+    }
 }
