@@ -302,10 +302,16 @@ iframe::-webkit-scrollbar-corner {
     text-align: center;
     border-radius: 1rem;
     border: 2px solid #ffdd00;
+    background-color: #000;
+    transition: background-color 0.5s;
+}
+
+.dropdown-container:has(> .dropdown-button:hover:not(.disabled)) {
+    background-color: #ffdd00;
 }
 
 .dropdown-button {
-    transition: background-color 0.5s, color 0.5s;
+    transition: color 0.5s;
 }
 
 .dropdown-button.disabled {
@@ -319,7 +325,6 @@ iframe::-webkit-scrollbar-corner {
 }
 
 .dropdown-button:hover:not(.disabled) {
-    background-color: #ffdd00;
     color: black;
 }
 
@@ -370,21 +375,18 @@ iframe::-webkit-scrollbar-corner {
 }
 
 .inline-dropdown-container {
-    overflow-y: hidden;
     margin: 5px;
     text-align: center;
     border-radius: 5px;
-    border: 2px solid #ffdd00;
+    /* border: 2px solid #ffdd00; */
 }
 
 .inline-dropdown-button {
     padding: 5px;
     border-bottom: 2px solid transparent;
+    border-radius: 5px;
+    border: 2px solid #ffdd00;
     transition: border-color 0.5s;
-}
-
-.inline-dropdown-button.expanded {
-    border-bottom: 2px solid #ffdd00;
 }
 
 .inline-dropdown-button svg.flip {
@@ -427,6 +429,39 @@ iframe::-webkit-scrollbar-corner {
 .inline-dropdown-content a:hover {
     text-shadow: 0 0 10px white;
     transform: scale(1.3);
+}
+
+.inline-dropdown-container:has(> .inline-dropdown-content.absolute) {
+    position: relative;
+}
+
+.inline-dropdown-content.absolute {
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(-5px);
+    min-height: 5px;
+}
+
+.inline-dropdown-content.absolute.expanded {
+    max-height: 200px;
+}
+
+.inline-dropdown-content-container.absolute {
+    border: 2px #ffdd00 solid;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    min-height: 0;
+    box-sizing: border-box;
+    transition: height 0.5s;
+    flex: 1;
+}
+
+.inline-dropdown-content.expanded .inline-dropdown-content-container.absolute {
+    max-height: 200px;
 }
 
 /*.fade-top {
@@ -1282,6 +1317,14 @@ div:has(> #set-resolution) {
 @media (max-aspect-ratio: 1) {
     #compressor-content {
         width: 70%;
+    }
+
+    #set-preset {
+        margin: 0;
+    }
+
+    #set-resolution {
+        margin: 0;
     }
 
     div:has(> #set-preset) {

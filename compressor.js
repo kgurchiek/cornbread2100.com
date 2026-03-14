@@ -117,7 +117,10 @@ let resolutions = [
 async function processFile(f) {
     file = f;
     if (sizeMode == 'percentage') updatePercentageSlider();
-    if (sizeMode == 'size') updateSizeSlider();
+    if (sizeMode == 'size') {
+        updateSizeSlider();
+        updateSizeText();
+    }
 
     let dropdownButton = resolutionDropdown.getElementsByClassName('dropdown-button')[0];
     dropdownButton.classList.add('disabled');
@@ -306,13 +309,13 @@ let sizeSlider = document.getElementById('size-slider');
 function updateSizeText() {
     let size = file?.size || 100 * 1024 * 1024;
     sizeText.value = (sizeSlider.value / 100 * size / sizeUnit).toFixed(0);
-    targetSize = Math.round(sizeText.value);
+    targetSize = Math.round(sizeText.value * sizeUnit);
 }
 sizeSlider.addEventListener('input', updateSizeText);
 function updateSizeSlider() {
     let size = file?.size || 100 * 1024 * 1024;
     sizeSlider.value = (sizeText.value * sizeUnit) / size * 100;
-    targetSize = Math.round(sizeText.value);
+    targetSize = Math.round(sizeText.value * sizeUnit);
 }
 updateSizeSlider();
 sizeText.addEventListener('input', updateSizeSlider);
@@ -389,7 +392,7 @@ compressButton.onclick = async () => {
     progressBar.style.removeProperty('display');
     progressText.innerText = '';
     progressText.style.removeProperty('display');
-    await ffmpeg.exec([
+    let args = [
         '-i', 'input',
         '-c:v', 'libx264',
         '-preset', preset,
@@ -399,7 +402,9 @@ compressButton.onclick = async () => {
         '-c:a', 'aac',
         '-b:a', '128k',
         output
-    ]);
+    ];
+    console.log(args.join(' '));
+    await ffmpeg.exec(args);
 
     const data = await ffmpeg.readFile(output);
     progressBar.style.display = 'none';

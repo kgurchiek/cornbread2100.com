@@ -115,10 +115,12 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="inline-dropdown-content">
-                            <a onclick="setSizeUnit(1024*1024, 'MB')">MB</a>
-                            <a onclick="setSizeUnit(1024, 'KB')">KB</a>
-                            <a onclick="setSizeUnit(1, 'B')">B</a>
+                        <div class="inline-dropdown-content absolute">
+                            <div class="inline-dropdown-content-container absolute">
+                                <a onclick="setSizeUnit(1024*1024, 'MB')">MB</a>
+                                <a onclick="setSizeUnit(1024, 'KB')">KB</a>
+                                <a onclick="setSizeUnit(1, 'B')">B</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -127,7 +129,7 @@
     
         <div id="compress-button" class="disabled disable-select">Compress</div>
     
-        <div id="progress-bar" class="progress-bar" style="height: 10px; ">
+        <div id="progress-bar" class="progress-bar" style="height: 10px; display: none;">
             <div id="progress-bar-fill" class="progress-bar-fill" style="height: 10px; width: 0;"></div>
         </div>
         <div id="progress-text" style="margin: 5px auto;"></div>
