@@ -66,7 +66,7 @@ window.addEventListener('dragover', (e) => {
     }
 });
 
-if (!isSecureContext) error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
+if (typeof SharedArrayBuffer == "undefined") error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
 const baseURL = isSecureContext ? 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm' : 'https://cdn.jsdelivr.net/npm/@ffmpeg/core/dist/esm';
 async function load() {
     if (ffmpeg.loaded) return;
