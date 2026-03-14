@@ -16,32 +16,35 @@ serverList.addEventListener('wheel', async (e) => {
     // if (e.deltaY < 0 && serverList.scrollTop == 0) e.preventDefault();
 });
 
-let dropdown = document.getElementById('filter-dropdown');
+let dropdownContent = document.getElementById('add-filter').getElementsByClassName('dropdown-content')[0];
 function toggleDropdown() {
-    dropdown.classList.toggle('expanded');
-    document.getElementById('dropdown-button').classList.toggle('expanded');
+    dropdownContent.classList.toggle('expanded');
+    document.getElementById('add-filter').getElementsByClassName('dropdown-button')[0].classList.toggle('expanded');
 }
 
-dropdown.addEventListener('wheel', (e) => {
-    if (e.deltaY > 0 && dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight) e.preventDefault();
-    if (e.deltaY < 0 && dropdown.scrollTop == 0) e.preventDefault();
+dropdownContent.addEventListener('wheel', (e) => {
+    if (e.deltaY > 0 && dropdownContent.scrollTop + dropdownContent.clientHeight >= dropdownContent.scrollHeight) e.preventDefault();
+    if (e.deltaY < 0 && dropdownContent.scrollTop == 0) e.preventDefault();
 });
 
-dropdown.addEventListener('scroll', (e) => {
-    let isScrollable = dropdown.scrollHeight > dropdown.clientHeight;
-    let hasContentBelow = dropdown.scrollTop < (dropdown.scrollHeight - dropdown.clientHeight);
+function updateBottomFade() {
+    if (!dropdownContent.classList.contains('expanded')) return;
+    let isScrollable = dropdownContent.scrollHeight > dropdownContent.clientHeight;
+    let hasContentBelow = (dropdownContent.scrollHeight - dropdownContent.clientHeight) - dropdownContent.scrollTop > 5;
     if (isScrollable && hasContentBelow) {
-        dropdown.classList.add('fade-bottom');
+        dropdownContent.classList.add('fade-bottom');
     } else {
-        dropdown.classList.remove('fade-bottom');
+        dropdownContent.classList.remove('fade-bottom');
     }
 
-    if (dropdown.scrollTop > 0) {
-        dropdown.classList.add('fade-top');
+    if (dropdownContent.scrollTop > 0) {
+        dropdownContent.classList.add('fade-top');
     } else {
-        dropdown.classList.remove('fade-top');
+        dropdownContent.classList.remove('fade-top');
     }
-});
+}
+dropdownContent.addEventListener('scroll', () => updateBottomFade());
+dropdownContent.addEventListener('transitionend', () => updateBottomFade('transitionend'));
 
 const filterHeader = (title, info) => `<div class="filter-header">
     <span class="filter-title disable-select">${title}</span>
@@ -404,7 +407,7 @@ async function updateServers(preserve = false) {
     if  (preserve) Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
     else {
         done = false;
-        Array.from(serverList.children).forEach(a => a.remove());
+        Array.from(serverList.children).filter(a => Array.from(a.classList).includes('server')).forEach(a => a.remove());
         serverList.scrollTo(0, 0);
     }
     let loadingSpinner = addLoadingSpinner();

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>MC Server Scanner</title>
+    <title>Server Scanner</title>
     <link href="style.css" rel="stylesheet" type="text/css"/>
 </head>
 
@@ -51,10 +51,10 @@
 
     <br>
 
-    <div id="filters">
-        <div id="add-filter" class="disable-select">
-            <div id="dropdown-button" onclick="toggleDropdown()"><div class="dropdown-text">+</div></div>
-            <div id="filter-dropdown" class="dropdown-content fade-bottom">
+    <div id="filters" style="width: 90%; margin: 0 auto;">
+        <div id="add-filter" class="dropdown-container disable-select" style="width: 50%;">
+            <div class="dropdown-button" onclick="toggleDropdown()"><div class="dropdown-text spin" style="font-size: 40px;">+</div></div>
+            <div class="dropdown-content fade-bottom">
                 <a onclick="addFilter('Player Count')">Player Count</a>
                 <a onclick="addFilter('Player Cap')">Player Cap</a>
                 <a onclick="addFilter('Full')">Full</a>
@@ -112,8 +112,8 @@
         </button>
         <h2 style="margin: 7px 0 0; text-align: center;">Credits</h2>
         <p id="credits-remaining">.../...</p>
-        <div id="credits-bar">
-            <div id="credits-bar-fill"></div>
+        <div id="credits-bar" class="progress-bar" style="width: 80%; height: 10px; margin: 10px auto 0;">
+            <div id="credits-bar-fill" class="progress-bar-fill" style="width: 100%; height: 10px;"></div>
         </div>
     </div>
 
