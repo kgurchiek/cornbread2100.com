@@ -66,7 +66,7 @@ window.addEventListener('dragover', (e) => {
     }
 });
 
-if (typeof SharedArrayBuffer == "undefined") error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
+if (typeof SharedArrayBuffer == 'undefined') error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
 const baseURL = isSecureContext ? 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm' : 'https://cdn.jsdelivr.net/npm/@ffmpeg/core/dist/esm';
 async function load() {
     if (ffmpeg.loaded) return;
@@ -290,8 +290,10 @@ window.setSizeUnit = (u, text) => {
 }
 
 let fileExtention = '.mp4';
-window.setFileExtension = (e) => {
+let fileType = 'video/mp4';
+window.setFileType = (e, t) => {
     fileExtention = e;
+    fileType = t;
     document.getElementById('set-file-type').getElementsByClassName('dropdown-text')[0].innerText = e;
     window.toggleInlineDropdown(document.getElementById('set-file-type').getElementsByClassName('inline-dropdown-button')[0]);
 }
@@ -430,7 +432,7 @@ compressButton.onclick = async () => {
     progressBar.style.display = 'none';
     progressText.style.display = 'none';
 
-    const videoBlob = new Blob([data.buffer], { type: file.type });
+    const videoBlob = new Blob([data.buffer], { type: fileType });
     outputVideo.src = URL.createObjectURL(videoBlob);
     outputVideo.style.removeProperty('display');
     downloadButton.href = outputVideo.src;
