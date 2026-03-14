@@ -80,7 +80,7 @@
             </div>
         </div>
     
-        <div id="frame-rate-option" class="option-box disable-select" style="margin: 10px auto 20px auto; display: grid; grid-template-columns: 9fr 1fr;">
+        <div id="frame-rate-option" class="option-box disable-select" style="margin: 10px auto; display: grid; grid-template-columns: 9fr 1fr;">
             <h2 style="grid-column: 1 / span 2;">Frame Rate</h2>
             <input id="frame-rate-slider" type="range" min="1" max="60" value="45" step="1" class="slider" style="margin: 20px 15px;">
             <div style="display: flex; margin-right: 15px;">
@@ -88,7 +88,7 @@
             </div>
         </div>
     
-        <div id="size-options" style="margin: 10px auto;">
+        <div id="size-options" style="margin: 20px auto;">
             <div class="option-tab-container">
                 <div id="percentage-tab" onclick="setSizeMode('percentage')" class="option-tab disable-select selected-tab" style="padding: 5px 10px;">Percentage</div>
                 <div id="size-tab" onclick="setSizeMode('size')" class="option-tab disable-select" style="padding: 5px 10px;">File Size</div>
@@ -126,7 +126,31 @@
                 </div>
             </div>
         </div>
-    
+
+        <div id="output-option" class="option-box disable-select" style="margin: 10px auto 20px auto; display: grid; justify-content: center;">
+            <h2 style="grid-column: 1 / span 2;">Output</h2>
+            <input id="file-name" type="text" class="small-text" value="50" style="margin-right: 5px; height: 25px; text-align: right; font-size: 20px;">
+            <div id="set-file-type" class="inline-dropdown-container disable-select" style="align-content: center; justify-self: left;">
+                <div class="inline-dropdown-button" onclick="toggleInlineDropdown(this)">
+                    <div style="display: flex; align-items: center;">   
+                        <div class="dropdown-text" style="font-size: 17px; margin-right: 15px;">.mp4</div>
+                        <svg class="flip" fill="currentColor" width="20px" height="20px">
+                            <use href="#icon-dropdown"></use>
+                        </svg>
+                    </div>
+                </div>
+                <div class="inline-dropdown-content absolute">
+                    <div class="inline-dropdown-content-container absolute">
+                        <a onclick="setFileExtension('.gif')">.gif</a>
+                        <a onclick="setFileExtension('.mkv')">.mkv</a>
+                        <a onclick="setFileExtension('.mov')">.mov</a>
+                        <a onclick="setFileExtension('.mp4')">.mp4</a>
+                        <a onclick="setFileExtension('.webm')">.webm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="compress-button" class="disabled disable-select">Compress</div>
     
         <div id="progress-bar" class="progress-bar" style="height: 10px; display: none;">
@@ -135,6 +159,9 @@
         <div id="progress-text" style="margin: 5px auto;"></div>
 
         <video id="output-video" controls style="border-radius: 10px; display: none; width: 100%;"></video>
+
+        <a id="download-button" class="disable-select" style="display: none;">Download</a>
+        <br>
     </div>
 
     <div id="error-container"></div>

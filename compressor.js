@@ -5,8 +5,10 @@ const ffmpeg = new FFmpeg();
 const uploadLabel = document.getElementById('upload-label');
 const uploadInput = document.getElementById('upload');
 const resolutionDropdown = document.getElementById('set-resolution');
+const fileNameInput = document.getElementById('file-name');
 const compressButton = document.getElementById('compress-button');
 const outputVideo = document.getElementById('output-video');
+const downloadButton = document.getElementById('download-button');
 const errorContainer = document.getElementById('error-container');
 
 let errorQueue = [];
@@ -66,10 +68,35 @@ window.addEventListener('dragover', (e) => {
 
 if (!isSecureContext) error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
 const baseURL = isSecureContext ? 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm' : 'https://cdn.jsdelivr.net/npm/@ffmpeg/core/dist/esm';
+async function load() {
+    if (ffmpeg.loaded) return;
     await ffmpeg.load({
-    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-    workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
+        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+        workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
+    });
+}
+
+const progressBar = document.getElementById('progress-bar');
+const progressBarFill = document.getElementById('progress-bar-fill');
+const progressText = document.getElementById('progress-text');
+let start;
+ffmpeg.on('progress', ({ progress, time }) => {
+    let speed = progress / (Date.now() - start) * 1000;
+    let estimate = Math.min((1 - progress) / speed, 99 * 3600 + 59 * 60 + 59);
+    let text = 'Estimated ';
+    let hours = Math.floor(estimate / 3600);
+    if (hours > 0) text += `${'0'.repeat(2 - String(hours).length)}${hours}:`;
+    let minutes = Math.floor(estimate % 3600 / 60);
+    if (hours > 0 || minutes > 0) text += `${'0'.repeat(2 - String(minutes).length)}${minutes}:`;
+    let seconds = Math.floor(estimate % 60);
+    text += `${hours == 0 && minutes == 0 ? `${seconds}s` : `${'0'.repeat(2 - String(seconds).length)}${seconds}`} remaining`;
+    progressText.innerText = text;
+    progressBarFill.style.width = `${(progress * 100).toFixed(1)}%`;
+});
+
+ffmpeg.on('log', ({ message }) => {
+    console.log(message);
 });
 
 let file;
@@ -121,6 +148,7 @@ async function processFile(f) {
         updateSizeSlider();
         updateSizeText();
     }
+    fileNameInput.value = `${file.name.slice(0, file.name.lastIndexOf('.'))}-compressed`;
 
     let dropdownButton = resolutionDropdown.getElementsByClassName('dropdown-button')[0];
     dropdownButton.classList.add('disabled');
@@ -128,6 +156,7 @@ async function processFile(f) {
     uploadLabel.children[1].innerHTML = `Uploaded: ${file.name}`;
     uploadLabel.classList.add('uploaded');
 
+    await load();
     await ffmpeg.writeFile('input', await fetchFile(file));
     format = await probe('input');
     if (isNaN(format.format.duration) || isNaN(Number(format.format.duration))) error(`Invalid video duration: "${format.format.duration}"`, 'Error processing video');
@@ -260,6 +289,13 @@ window.setSizeUnit = (u, text) => {
     updateSizeSlider();
 }
 
+let fileExtention = '.mp4';
+window.setFileExtension = (e) => {
+    fileExtention = e;
+    document.getElementById('set-file-type').getElementsByClassName('dropdown-text')[0].innerText = e;
+    window.toggleInlineDropdown(document.getElementById('set-file-type').getElementsByClassName('inline-dropdown-button')[0]);
+}
+
 let sizeMode = 'percentage';
 let sizeTabs = [
     document.getElementById('percentage-tab'),
@@ -333,6 +369,8 @@ updateSizeSlider();
 frameRateText.addEventListener('input', updateFrameRateSlider);
 
 async function probe(input) {
+    await load();
+    
     await ffmpeg.ffprobe([
         '-show_format',
         '-select_streams', 'v:0',
@@ -362,32 +400,14 @@ compressButton.onclick = async () => {
     
     compressButton.classList.add('disabled');
 
-    const progressBar = document.getElementById('progress-bar');
-    const progressBarFill = document.getElementById('progress-bar-fill');
-    const progressText = document.getElementById('progress-text');
-    let start = Date.now();
-    ffmpeg.on('progress', ({ progress, time }) => {
-        let speed = progress / (Date.now() - start) * 1000;
-        let estimate = Math.min((1 - progress) / speed, 99 * 3600 + 59 * 60 + 59);
-        let text = 'Estimated ';
-        let hours = Math.floor(estimate / 3600);
-        if (hours > 0) text += `${'0'.repeat(2 - String(hours).length)}${hours}:`;
-        let minutes = Math.floor(estimate % 3600 / 60);
-        if (hours > 0 || minutes > 0) text += `${'0'.repeat(2 - String(minutes).length)}${minutes}:`;
-        let seconds = Math.floor(estimate % 60);
-        text += `${hours == 0 && minutes == 0 ? `${seconds}s` : `${'0'.repeat(2 - String(seconds).length)}${seconds}`} remaining`;
-        progressText.innerText = text;
-        progressBarFill.style.width = `${(progress * 100).toFixed(1)}%`;
-    });
+    await load();
 
-    ffmpeg.on('log', ({ message }) => {
-        console.log(message);
-    });
+    start = Date.now();
 
     let bitrate = targetSize * 8 / format.format.duration;
     let targetRate = Math.max(Math.floor(bitrate - 128000), 1000); // TODO: warning when too low
 
-    let output = `${file.name.split('.')[0]}-compressed.${file.name.split('.')[1]}`;
+    let output = `${fileNameInput.value}${fileExtention}`;
     
     progressBar.style.removeProperty('display');
     progressText.innerText = '';
@@ -413,6 +433,9 @@ compressButton.onclick = async () => {
     const videoBlob = new Blob([data.buffer], { type: file.type });
     outputVideo.src = URL.createObjectURL(videoBlob);
     outputVideo.style.removeProperty('display');
+    downloadButton.href = outputVideo.src;
+    downloadButton.download = output;
+    downloadButton.style.removeProperty('display');
 
     compressButton.classList.remove('disabled');
-};
+}

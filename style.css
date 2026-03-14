@@ -378,7 +378,6 @@ iframe::-webkit-scrollbar-corner {
     margin: 5px;
     text-align: center;
     border-radius: 5px;
-    /* border: 2px solid #ffdd00; */
 }
 
 .inline-dropdown-button {
@@ -444,6 +443,7 @@ iframe::-webkit-scrollbar-corner {
     flex-direction: column;
     transform: translateY(-5px);
     min-height: 5px;
+    z-index: 1;
 }
 
 .inline-dropdown-content.absolute.expanded {
@@ -462,6 +462,7 @@ iframe::-webkit-scrollbar-corner {
 
 .inline-dropdown-content.expanded .inline-dropdown-content-container.absolute {
     max-height: 200px;
+    overflow-y: scroll;
 }
 
 /*.fade-top {
@@ -1268,9 +1269,8 @@ input[type="text"].small-text:focus {
     width: 180px;
     height: 50px;
     font-size: 20px;
-    display: flex;
     justify-content: center;
-    align-items: center;
+    align-content: center;
     background-color: #ffdd00;
     color: black;
     border-radius: 8px;
@@ -1313,6 +1313,48 @@ div:has(> #set-resolution) {
 #set-resolution {
     margin: 0 0 0 5px;
 }
+
+#file-name {
+    margin: 10px;
+    background: black;
+    color: #c8c8c8;
+    border: 2px solid #c8c8c8;
+    border-radius: 5px;
+    opacity: 0.8;
+    box-shadow: 0 0 0 0 #c8c8c8;
+    transition: opacity 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+#file-name:hover {
+    box-shadow: 0 0 8px 0 #c8c8c8;
+    opacity: 1;
+}
+
+#file-name:focus {
+    outline: none;
+    border: 2px solid #ffdd00;
+    box-shadow: 0 0 8px 0 #ffdd00ff;
+}
+
+#download-button {
+    display: block;
+    width: 180px;
+    height: 50px;
+    font-size: 20px;
+    justify-content: center;
+    align-content: center;
+    background-color: #ffdd00;
+    color: black;
+    border-radius: 8px;
+    margin: 20px auto;
+    text-decoration: none;
+    transition: transform 0.5s;
+}
+
+#download-button:hover {
+    transform: scale(1.1);
+}
+
 
 @media (max-aspect-ratio: 1) {
     #compressor-content {
