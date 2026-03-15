@@ -2,9 +2,14 @@ import { FFmpeg } from './ffmpeg/ffmpeg/dist/esm/index.js';
 import { fetchFile, toBlobURL } from './ffmpeg/util/dist/esm/index.js';
 const ffmpeg = new FFmpeg();
 
+const args = new URL(window.location).searchParams;
 const uploadLabel = document.getElementById('upload-label');
 const uploadInput = document.getElementById('upload');
 const resolutionDropdown = document.getElementById('set-resolution');
+const videoEncoderInput = document.getElementById('video-encoder-input');
+const videoEncoderDropdownContent = videoEncoderInput.parentElement.getElementsByClassName('text-dropdown-content')[0];
+const audioEncoderInput = document.getElementById('audio-encoder-input');
+const audioEncoderDropdownContent = audioEncoderInput.parentElement.getElementsByClassName('text-dropdown-content')[0];
 const fileNameInput = document.getElementById('file-name');
 const compressButton = document.getElementById('compress-button');
 const outputVideo = document.getElementById('output-video');
@@ -66,15 +71,51 @@ window.addEventListener('dragover', (e) => {
     }
 });
 
-if (typeof SharedArrayBuffer == 'undefined') error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
-const baseURL = isSecureContext ? 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm' : 'https://cdn.jsdelivr.net/npm/@ffmpeg/core/dist/esm';
+let mt = true;
+if (args.get('mt').toLowerCase() == 'false') mt = false;
+if (mt && typeof SharedArrayBuffer == 'undefined') {
+    error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
+    mt = false;
+}
+const baseURL = mt ? 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt/dist/esm' : 'https://cdn.jsdelivr.net/npm/@ffmpeg/core/dist/esm';
 async function load() {
     if (ffmpeg.loaded) return;
     await ffmpeg.load({
         coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
         wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-        workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
+        workerURL: mt ? await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript') : null
     });
+
+    Array.from(videoEncoderDropdownContent.children).forEach(a => a.remove());
+    let log = '';
+    const handleLog = ({ message }) => log += `${log.length == 0 ? '' : '\n'}${message}`;
+    ffmpeg.on('log', handleLog);
+    await ffmpeg.exec(['-encoders']);
+    ffmpeg.off('log', handleLog);
+    log = log.slice(log.indexOf('Encoders:') + 9);
+    log = log.slice(log.indexOf('------') + 6);
+    log = log.slice(0, log.indexOf('Aborted()'));
+    log = log.trim().split('\n');
+    for (let line of log) {
+        line = line.trim();
+        if (line.startsWith('V')) {
+            line = line.slice(line.indexOf(' ') + 1);
+            line = line.slice(0, line.indexOf(' '));
+            let option = document.createElement('a');
+            option.innerText = line;
+            option.onclick = () => setEncoder(line);
+            videoEncoderDropdownContent.appendChild(option);
+        }
+
+        if (line.startsWith('A')) {
+            line = line.slice(line.indexOf(' ') + 1);
+            line = line.slice(0, line.indexOf(' '));
+            let option = document.createElement('a');
+            option.innerText = line;
+            option.onclick = () => setEncoder(line);
+            audioEncoderDropdownContent.appendChild(option);
+        }
+    }
 }
 
 const progressBar = document.getElementById('progress-bar');
@@ -273,12 +314,14 @@ let preset = 'ultrafast';
 window.setPreset = (p, text) => {
     preset = p;
     document.getElementById('set-preset').getElementsByClassName('dropdown-text')[0].innerText = `Preset: ${text}`;
+    toggleDropdown(document.getElementById('set-preset').getElementsByClassName('dropdown-button')[0]);
 }
 
 let resolution = '1920x1080';
 window.setResolution = (r, text) => {
     resolution = r;
-    document.getElementById('set-resolution').getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${text}`;
+    resolutionDropdown.getElementsByClassName('dropdown-text')[0].innerText = `Resolution: ${text}`;
+    toggleDropdown(resolutionDropdown.getElementsByClassName('dropdown-button')[0]);
 }
 
 let sizeUnit = 1024*1024;
@@ -289,13 +332,48 @@ window.setSizeUnit = (u, text) => {
     updateSizeSlider();
 }
 
+function updateVideoEncoderDropdown() {
+    let options = 0;
+    Array.from(videoEncoderDropdownContent.children).forEach(a => {
+        a.style.removeProperty('display');
+        if (a.innerText.toLowerCase().includes(videoEncoderInput.value.toLowerCase())) options++;
+        else a.style.display = 'none';
+    });
+    videoEncoderDropdownContent.style.removeProperty('border-top');
+    if (options == 0) videoEncoderDropdownContent.style['border-top'] = 'none';
+};
+updateVideoEncoderDropdown();
+videoEncoderInput.addEventListener('input', updateVideoEncoderDropdown);
+videoEncoderInput.addEventListener('click', updateVideoEncoderDropdown);
+
+function updateAudioEncoderDropdown() {
+    let options = 0;
+    Array.from(audioEncoderDropdownContent.children).forEach(a => {
+        a.style.removeProperty('display');
+        if (a.innerText.toLowerCase().includes(audioEncoderInput.value.toLowerCase())) options++;
+        else a.style.display = 'none';
+    });
+    audioEncoderDropdownContent.style.removeProperty('border-top');
+    if (options == 0) audioEncoderDropdownContent.style['border-top'] = 'none';
+};
+updateAudioEncoderDropdown();
+audioEncoderInput.addEventListener('input', updateAudioEncoderDropdown);
+audioEncoderInput.addEventListener('click', updateAudioEncoderDropdown);
+
+window.setEncoder = (e) => {
+    if (!videoEncoderInput.matches(':focus') && videoEncoderInput.getAnimations().length == 0) return;
+    videoEncoderInput.value = e;
+}
+
 let fileExtention = '.mp4';
 let fileType = 'video/mp4';
 window.setFileType = (e, t) => {
+    let dropdownButton = document.getElementById('set-file-type').getElementsByClassName('inline-dropdown-button')[0];
+    if (!dropdownButton.classList.contains('expanded')) return;
     fileExtention = e;
     fileType = t;
     document.getElementById('set-file-type').getElementsByClassName('dropdown-text')[0].innerText = e;
-    window.toggleInlineDropdown(document.getElementById('set-file-type').getElementsByClassName('inline-dropdown-button')[0]);
+    window.toggleInlineDropdown(dropdownButton);
 }
 
 let sizeMode = 'percentage';
@@ -416,12 +494,12 @@ compressButton.onclick = async () => {
     progressText.style.removeProperty('display');
     let args = [
         '-i', 'input',
-        '-c:v', 'libx264',
+        '-c:v', videoEncoderInput.value || videoEncoderInput.placeholder,
         '-preset', preset,
         '-vf', `scale=${resolution}`,
         '-r', frameRateText.value,
         '-b:v', String(targetRate),
-        '-c:a', 'aac',
+        '-c:a', audioEncoderInput.value || audioEncoderInput.placeholder,
         '-b:a', '128k',
         output
     ];

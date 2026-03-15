@@ -86,7 +86,7 @@
             <h2 style="grid-column: 1 / span 2;">Frame Rate</h2>
             <input id="frame-rate-slider" type="range" min="1" max="60" value="45" step="1" class="slider" style="margin: 20px 15px;">
             <div style="display: flex; margin-right: 15px;">
-                <input id="frame-rate-text" type="text" class="small-text" value="45" style="margin-right: 5px; width: 30px;">
+                <input id="frame-rate-text" type="text" class="small-text" value="45" style="margin: 10px 5px 10px 10px; width: 30px;">
             </div>
         </div>
     
@@ -99,7 +99,7 @@
                 <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
                 <input id="percentage-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
                 <div style="display: flex; margin-right: 15px;">
-                    <input id="percentage-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px; height: 20px;">
+                    <input id="percentage-text" type="text" class="small-text" value="50" style="margin: 10px 5px 10px 10px; width: 30px; height: 20px;">
                     <span style="align-content: center;">%</span>
                 </div>
             </div>
@@ -107,7 +107,7 @@
                 <h2 style="grid-column: 1 / span 2;">Target File Size</h2>
                 <input id="size-slider" type="range" min="1" max="100" value="50" class="slider" style="margin: 20px 15px;">
                 <div style="display: flex; margin-right: 15px; align-items: flex-start;">
-                    <input id="size-text" type="text" class="small-text" value="50" style="margin-right: 5px; width: 30px; height: 20px;">
+                    <input id="size-text" type="text" class="small-text" value="50" style="margin: 10px 5px 10px 10px; width: 30px; height: 20px;">
                     <div id="set-size-unit" class="inline-dropdown-container disable-select" style="align-content: center;">
                         <div class="inline-dropdown-button" onclick="toggleInlineDropdown(this)">
                             <div style="display: flex; align-items: center;">   
@@ -129,9 +129,27 @@
             </div>
         </div>
 
+        <div id="encoder-option" class="option-box disable-select" style="margin: 10px auto 20px auto; display: grid; justify-content: center;">
+            <h2 style="grid-column: 1 / span 2;">Encoder</h2>
+            <div id="set-vide-encoder" class="text-dropdown-container disable-select" style="align-content: center; justify-self: left;">
+                <input id="video-encoder-input" type="text" class="text-dropdown" placeholder="libx264" style="text-align: center;">
+                </input>
+                <div class="text-dropdown-content-container" style="z-index: 2;">
+                    <div class="text-dropdown-content"></div>
+                </div>
+            </div>
+            <div id="set-audio-encoder" class="text-dropdown-container disable-select" style="align-content: center; justify-self: left;">
+                <input id="audio-encoder-input" type="text" class="text-dropdown" placeholder="aac" style="text-align: center;">
+                </input>
+                <div class="text-dropdown-content-container" style="z-index: 2;">
+                    <div class="text-dropdown-content"></div>
+                </div>
+            </div>
+        </div>
+
         <div id="output-option" class="option-box disable-select" style="margin: 10px auto 20px auto; display: grid; justify-content: center;">
             <h2 style="grid-column: 1 / span 2;">Output</h2>
-            <input id="file-name" type="text" class="small-text" value="output" style="margin-right: 5px; height: 25px; text-align: right; font-size: 20px; min-width: 0;">
+            <input id="file-name" type="text" class="small-text" value="output" style="margin: 10px 5px 10px 10px; height: 25px; text-align: right; font-size: 20px; min-width: 0;">
             <div id="set-file-type" class="inline-dropdown-container disable-select" style="align-content: center; justify-self: left;">
                 <div class="inline-dropdown-button" onclick="toggleInlineDropdown(this)">
                     <div style="display: flex; align-items: center;">   
