@@ -6,10 +6,6 @@ const args = new URL(window.location).searchParams;
 const uploadLabel = document.getElementById('upload-label');
 const uploadInput = document.getElementById('upload');
 const resolutionDropdown = document.getElementById('set-resolution');
-const videoEncoderInput = document.getElementById('video-encoder-input');
-const videoEncoderDropdownContent = videoEncoderInput.parentElement.getElementsByClassName('text-dropdown-content')[0];
-const audioEncoderInput = document.getElementById('audio-encoder-input');
-const audioEncoderDropdownContent = audioEncoderInput.parentElement.getElementsByClassName('text-dropdown-content')[0];
 const fileNameInput = document.getElementById('file-name');
 const compressButton = document.getElementById('compress-button');
 const outputVideo = document.getElementById('output-video');
@@ -103,7 +99,7 @@ async function load() {
             line = line.slice(0, line.indexOf(' '));
             let option = document.createElement('a');
             option.innerText = line;
-            option.onclick = () => setEncoder(line);
+            option.onclick = () => setVideoEncoder(line);
             videoEncoderDropdownContent.appendChild(option);
         }
 
@@ -112,7 +108,7 @@ async function load() {
             line = line.slice(0, line.indexOf(' '));
             let option = document.createElement('a');
             option.innerText = line;
-            option.onclick = () => setEncoder(line);
+            option.onclick = () => setAudioEncoder(line);
             audioEncoderDropdownContent.appendChild(option);
         }
     }
@@ -332,6 +328,9 @@ window.setSizeUnit = (u, text) => {
     updateSizeSlider();
 }
 
+
+const videoEncoderInput = document.getElementById('video-encoder-input');
+const videoEncoderDropdownContent = videoEncoderInput.parentElement.getElementsByClassName('text-dropdown-content')[0];
 function updateVideoEncoderDropdown() {
     let options = 0;
     Array.from(videoEncoderDropdownContent.children).forEach(a => {
@@ -346,6 +345,8 @@ updateVideoEncoderDropdown();
 videoEncoderInput.addEventListener('input', updateVideoEncoderDropdown);
 videoEncoderInput.addEventListener('click', updateVideoEncoderDropdown);
 
+const audioEncoderInput = document.getElementById('audio-encoder-input');
+const audioEncoderDropdownContent = audioEncoderInput.parentElement.getElementsByClassName('text-dropdown-content')[0];
 function updateAudioEncoderDropdown() {
     let options = 0;
     Array.from(audioEncoderDropdownContent.children).forEach(a => {
@@ -360,9 +361,14 @@ updateAudioEncoderDropdown();
 audioEncoderInput.addEventListener('input', updateAudioEncoderDropdown);
 audioEncoderInput.addEventListener('click', updateAudioEncoderDropdown);
 
-window.setEncoder = (e) => {
+window.setVideoEncoder = (e) => {
     if (!videoEncoderInput.matches(':focus') && videoEncoderInput.getAnimations().length == 0) return;
     videoEncoderInput.value = e;
+}
+
+window.setAudioEncoder = (e) => {
+    if (!audioEncoderInput.matches(':focus') && audioEncoderInput.getAnimations().length == 0) return;
+    audioEncoderInput.value = e;
 }
 
 let fileExtention = '.mp4';
