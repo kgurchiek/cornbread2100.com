@@ -119,6 +119,7 @@ const progressBarFill = document.getElementById('progress-bar-fill');
 const progressText = document.getElementById('progress-text');
 let start;
 ffmpeg.on('progress', ({ progress, time }) => {
+    progress = Math.min(progress, 1);
     let speed = progress / (Date.now() - start) * 1000;
     let estimate = Math.min((1 - progress) / speed, 99 * 3600 + 59 * 60 + 59);
     let text = 'Estimated ';
