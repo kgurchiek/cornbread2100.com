@@ -68,7 +68,7 @@ window.addEventListener('dragover', (e) => {
 });
 
 let mt = true;
-if (args.get('mt').toLowerCase() == 'false') mt = false;
+if (args.get('mt')?.toLowerCase() == 'false') mt = false;
 if (mt && typeof SharedArrayBuffer == 'undefined') {
     error('Insecure context, multithreading unavailable', 'Warning', '#ffdd00');
     mt = false;
