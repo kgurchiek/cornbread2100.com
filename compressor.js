@@ -500,12 +500,12 @@ compressButton.onclick = async () => {
     progressText.style.removeProperty('display');
     let args = [
         '-i', 'input',
-        '-c:v', videoEncoderInput.value || videoEncoderInput.placeholder,
+        '-c:v', videoEncoderInput.value || 'libx264',
         '-preset', preset,
         '-vf', `scale=${resolution}`,
         '-r', frameRateText.value,
         '-b:v', String(targetRate),
-        '-c:a', audioEncoderInput.value || audioEncoderInput.placeholder,
+        '-c:a', audioEncoderInput.value || 'aac',
         '-b:a', '128k',
         output
     ];
