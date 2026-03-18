@@ -402,11 +402,14 @@ function statusErrors(status) {
 
 let loading = false;
 let done = false;
+let results = [];
+const saveButton = document.getElementById('save-button');
 async function updateServers(preserve = false) {
     loading = true;
-    if  (preserve) Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
+    if (preserve) Array.from(document.getElementsByClassName('loading-spinner')).forEach(a => a.remove());
     else {
         done = false;
+        results.length = 0;
         Array.from(serverList.children).filter(a => Array.from(a.classList).includes('server')).forEach(a => a.remove());
         serverList.scrollTo(0, 0);
     }
@@ -438,6 +441,9 @@ async function updateServers(preserve = false) {
     updateCredits(data.credits);
 
     for (const server of data.data) {
+        results.push(server);
+        let blob = new Blob([JSON.stringify(results)], { type: 'application/json' });
+        saveButton.href = URL.createObjectURL(blob);
         const serverElement = document.createElement('div')
         serverElement.className = 'server';
 
